@@ -11,10 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
-import java.lang.reflect.Method;
-
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.movieListView) RecyclerView mMovieListView;
     @BindView(R.id.rootLayout) DrawerLayout mDrawerLayout;
 
+    @BindString(R.string.shared_pref_name) String sharedPrefName;
+    @BindString(R.string.shared_pref_style_key) String sharedPrefStyleKey;
+
     ActionBarDrawerToggle mDrawerToggle;
 
     Movie[] mMovieList = new Movie[6];
@@ -33,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences prefs = this.getSharedPreferences("cz.muni.fi.pv256.movio2.uco_410034", Context.MODE_PRIVATE);
-        setTheme(prefs.getInt("Style", R.style.AppTheme_1));
+        SharedPreferences prefs = this.getSharedPreferences(getString(R.string.shared_pref_name), Context.MODE_PRIVATE);
+        setTheme(prefs.getInt(getString(R.string.shared_pref_style_key), R.style.AppTheme_1));
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -82,15 +83,15 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.drawerChangeStyleButton)
     public void drawerChangeStyleButtonClick(View view) {
-        SharedPreferences prefs = this.getSharedPreferences("cz.muni.fi.pv256.movio2.uco_410034", Context.MODE_PRIVATE);
-        int themeId = prefs.getInt("Style", R.style.AppTheme_1);
+        SharedPreferences prefs = this.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+        int themeId = prefs.getInt(sharedPrefStyleKey, R.style.AppTheme_1);
         switch (themeId) {
-            case R.style.AppTheme_1:
-                prefs.edit().putInt("Style", R.style.AppTheme_2).apply();
-                break;
             case R.style.AppTheme_2:
+                prefs.edit().putInt(sharedPrefStyleKey, R.style.AppTheme_1).apply();
+                break;
+            case R.style.AppTheme_1:
             default:
-                prefs.edit().putInt("Style", R.style.AppTheme_1).apply();
+                prefs.edit().putInt(sharedPrefStyleKey, R.style.AppTheme_2).apply();
                 break;
         }
         Intent intent = new Intent(this, MainActivity.class);
