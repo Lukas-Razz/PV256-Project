@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.squareup.leakcanary.LeakCanary;
+
 /**
  * Created by lukas on 01.10.2017.
  */
@@ -17,6 +19,11 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
 
         if (BuildConfig.DEBUG) {
             initStrictMode();
