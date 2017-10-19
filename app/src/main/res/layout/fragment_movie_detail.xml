@@ -7,35 +7,118 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/mainAppbarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="150dp">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/movieDetailCollapsingLayout"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/movieDetailAppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:contentScrim="?attr/colorPrimary"
-            app:titleEnabled="true">
+            android:layout_height="300dp"
+            >
 
-            <ImageView
-                android:id="@+id/movieDetailCollapsingBackdrop"
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/movieDetailCollapsingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher"
-                app:layout_collapseMode="parallax" />
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:contentScrim="?attr/colorPrimary">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/movieDetailCollapsingToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                />
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/movieDetailCollapsingBackdrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_collapseMode="parallax" >
 
-        </android.support.design.widget.CollapsingToolbarLayout>
+                    <android.support.constraint.Guideline
+                        android:id="@+id/movieDetailCollapsingGuidelineMovieImageTop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_percent="0.4"/>
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/movieDetailCollapsingGuidelineUpperImageBottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_percent="0.5"/>
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/movieDetailCollapsingGuidelineMovieTitleBottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_percent="0.75"/>
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/movieDetailCollapsingGuidelineMovieImageRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.33"/>
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/movieDetailCollapsingGuidelineMovieTextRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.66"/>
+
+                    <ImageView
+                        android:id="@+id/movieDetailCollapsingUpperImage"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/movieDetailCollapsingGuidelineUpperImageBottom"
+                        android:src="@mipmap/ic_launcher"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/movieDetailCollapsingMovieImage"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="5dp"
+                        app:layout_constraintTop_toBottomOf="@+id/movieDetailCollapsingGuidelineMovieImageTop"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="@+id/movieDetailCollapsingGuidelineMovieImageRight"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <TextView
+                        android:id="@+id/movieDetailCollapsingMovieTitleLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@+id/movieDetailCollapsingGuidelineMovieTitleBottom"
+                        app:layout_constraintLeft_toRightOf="@+id/movieDetailCollapsingGuidelineMovieImageRight"
+                        app:layout_constraintRight_toLeftOf="@+id/movieDetailCollapsingMovieYearLabel" />
+
+                    <TextView
+                        android:id="@+id/movieDetailCollapsingMovieYearLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@+id/movieDetailCollapsingGuidelineMovieTitleBottom"
+                        app:layout_constraintLeft_toRightOf="@+id/movieDetailCollapsingMovieTitleLabel"
+                        app:layout_constraintRight_toRightOf="@+id/movieDetailCollapsingGuidelineMovieTextRight" />
+
+                    <TextView
+                        android:id="@+id/movieDetailCollapsingMovieDirectorLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/movieDetailCollapsingGuidelineMovieTitleBottom"
+                        app:layout_constraintLeft_toRightOf="@+id/movieDetailCollapsingGuidelineMovieImageRight" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/movieDetailCollapsingToolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin" />
+
+            </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -63,11 +146,12 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:layout_height="wrap_content"
+        android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:src="@drawable/ic_add_white_24px"
-        app:layout_anchor="@id/movieDetailCollapsingLayout"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_anchor="@+id/movieDetailAppBarLayout"
+        app:layout_anchorGravity="center_vertical|right"
+        android:src="@drawable/ic_add_white_24px" />
 
 </android.support.design.widget.CoordinatorLayout>

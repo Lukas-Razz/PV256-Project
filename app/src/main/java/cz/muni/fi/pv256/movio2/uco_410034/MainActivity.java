@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.util.Random;
+
 import butterknife.BindBool;
 import butterknife.BindString;
 import butterknife.BindView;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @Nullable @BindView(R.id.leftContentLayout) FrameLayout mLeftContentLayout;
     @Nullable @BindView(R.id.rightContentLayout) FrameLayout mRightContentLayout;
 
+    @BindString(R.string.fragment_movie_list_tag) String fragmentMovieListTag;
+    @BindString(R.string.fragment_movie_detail_tag) String fragmentMovieDetailTag;
     @BindString(R.string.shared_pref_name) String sharedPrefName;
     @BindString(R.string.shared_pref_style_key) String sharedPrefStyleKey;
     @BindString(R.string.bundle_movie_categories_key) String mBundleMovieCategoriesKey;
@@ -61,6 +65,21 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
 
         setUpFragments(savedInstanceState);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!mIsTablet && getSupportFragmentManager().findFragmentByTag(fragmentMovieDetailTag) != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
+            MovieListFragment movieListFragment = new MovieListFragment();
+            movieListFragment.setArguments(bundle);
+            movieListFragment.setMovieSelectedListener(this);
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -105,25 +124,28 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         if(savedInstanceState == null) {
 
             fillDummyData();
-            Bundle bundle = new Bundle();
-            bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
-            bundle.putParcelable(mBundleMovieKey, mMovieCategories.get(0).getMovieList()[0]);
-
+            Bundle bundle;
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             if (mIsTablet) {
                 MovieListFragment movieListFragment = new MovieListFragment();
+                bundle = new Bundle();
+                bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
                 movieListFragment.setArguments(bundle);
                 movieListFragment.setMovieSelectedListener(this);
-                fragmentTransaction.add(R.id.leftContentLayout, movieListFragment);
+                fragmentTransaction.add(R.id.leftContentLayout, movieListFragment, fragmentMovieListTag);
                 MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+                bundle = new Bundle();
+                bundle.putParcelable(mBundleMovieKey, mMovieCategories.get(0).getMovieList()[0]);
                 movieDetailFragment.setArguments(bundle);
-                fragmentTransaction.add(R.id.rightContentLayout, movieDetailFragment);
+                fragmentTransaction.add(R.id.rightContentLayout, movieDetailFragment, fragmentMovieDetailTag);
             } else {
                 MovieListFragment movieListFragment = new MovieListFragment();
+                bundle = new Bundle();
+                bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
                 movieListFragment.setArguments(bundle);
                 movieListFragment.setMovieSelectedListener(this);
-                fragmentTransaction.add(R.id.contentLayout, movieListFragment);
+                fragmentTransaction.add(R.id.contentLayout, movieListFragment, fragmentMovieListTag);
             }
             fragmentTransaction.commit();
         }
@@ -149,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
 
     private void fillDummyData() {
 
+        Random random = new Random();
         for (int i = 0; i < 2; i++) {
             String name = "Dummy Category #" + i;
             MovieCategory category = new MovieCategory();
@@ -157,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
             for (int j = 0; j < 6; j++) {
                 Movie movie = new Movie();
                 movie.setTitle("DummyMovie #" + i + "." + j);
+                movie.setReleaseDate(random.nextInt(2018-1950) + 1950);
                 movies[j] = movie;
             }
             category.setMovieList(movies);
@@ -172,10 +196,10 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         bundle.putParcelable(mBundleMovieKey, movie);
         movieDetailFragment.setArguments(bundle);
         if(mIsTablet) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.rightContentLayout, movieDetailFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.rightContentLayout, movieDetailFragment, fragmentMovieDetailTag).commit();
         }
         else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieDetailFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieDetailFragment, fragmentMovieDetailTag).commit();
         }
     }
 }
