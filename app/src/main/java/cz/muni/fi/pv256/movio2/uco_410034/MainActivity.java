@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.media.MediaBrowserCompat;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
             movieListFragment.setArguments(bundle);
             movieListFragment.setMovieSelectedListener(this);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
         }
         else {
             super.onBackPressed();
@@ -86,6 +88,17 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        }
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Bundle bundle = new Bundle();
+                bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
+                MovieListFragment movieListFragment = new MovieListFragment();
+                movieListFragment.setArguments(bundle);
+                movieListFragment.setMovieSelectedListener(this);
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -149,6 +162,11 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
             }
             fragmentTransaction.commit();
         }
+        else {
+            Fragment movieListFragment = getSupportFragmentManager().findFragmentByTag(fragmentMovieListTag);
+            if(movieListFragment != null)
+                ((MovieListFragment)movieListFragment).setMovieSelectedListener(this);
+        }
     }
 
     @OnClick(R.id.drawerChangeStyleButton)
@@ -200,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
         else {
             getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieDetailFragment, fragmentMovieDetailTag).commit();
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
     }
 }
