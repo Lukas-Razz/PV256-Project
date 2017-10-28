@@ -15,4 +15,6 @@
     <color name="primary_dark_2">#303F9F</color>
     <color name="primary_light_2">#C5CAE9</color>
     <color name="accent_2">#ffc107</color>
+    <!--Other-->
+    <color name="rating_star_color">#ffc107</color>
 </resources>

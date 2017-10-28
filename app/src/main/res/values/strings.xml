@@ -9,6 +9,9 @@
     <string name="bundle_movie_key">movie</string>
     <string name="fragment_movie_list_tag">fragmentMovieList</string>
     <string name="fragment_movie_detail_tag">fragmentMovieDetail</string>
+    <string name="empty_list_no_connection">Device is not connected to the Internet!</string>
+    <string name="empty_list_no_data">No data to show!</string>
+    <string name="drawer_item_change_style">Change Style</string>
 
 
     <string name="loremIpsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fames ac turpis egestas sed tempus urna et. Pretium nibh ipsum consequat nisl vel. Laoreet sit amet cursus sit. Convallis posuere morbi leo urna molestie. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Cursus vitae congue mauris rhoncus. Est lorem ipsum dolor sit amet. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique. Pulvinar elementum integer enim neque volutpat. Felis imperdiet proin fermentum leo.

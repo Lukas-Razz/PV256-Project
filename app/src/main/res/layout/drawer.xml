@@ -11,6 +11,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
-        android:text="Change Style"/>
+        android:text="@string/drawer_item_change_style"/>
 
 </LinearLayout>

@@ -33,7 +33,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListViewHolder> 
 
     @Override
     public void onBindViewHolder(MovieListViewHolder holder, int position) {
-        holder.setMovieCategoryLabel(mMovieCategories.get(position).getCategoryName());
+        holder.setMovieCategory(mMovieCategories.get(position));
         holder.setMovieButtonClickListener(this);
     }
 
