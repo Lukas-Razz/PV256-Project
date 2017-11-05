@@ -63,7 +63,12 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences prefs = this.getSharedPreferences(getString(R.string.shared_pref_name), Context.MODE_PRIVATE);
-        setTheme(prefs.getInt(getString(R.string.shared_pref_style_key), R.style.AppTheme_1));
+        if(BuildConfig.FLAVOR.equals("alternative")) {
+            setTheme(prefs.getInt(getString(R.string.shared_pref_style_key), R.style.AppTheme_1));
+        }
+        else {
+            setTheme(prefs.getInt(getString(R.string.shared_pref_style_key), R.style.AppTheme_2));
+        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -187,7 +192,13 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @OnClick(R.id.drawerChangeStyleButton)
     public void drawerChangeStyleButtonClick(View view) {
         SharedPreferences prefs = this.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
-        int themeId = prefs.getInt(sharedPrefStyleKey, R.style.AppTheme_1);
+        int themeId;
+        if(BuildConfig.FLAVOR.equals("alternative")) {
+            themeId = prefs.getInt(sharedPrefStyleKey, R.style.AppTheme_2);
+        }
+        else {
+            themeId = prefs.getInt(sharedPrefStyleKey, R.style.AppTheme_1);
+        }
         switch (themeId) {
             case R.style.AppTheme_2:
                 prefs.edit().putInt(sharedPrefStyleKey, R.style.AppTheme_1).apply();

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="open_drawer">引き出しを開く</string>
+    <string name="close_drawer">引き出しを閉じる</string>
+    <string name="empty_list_no_connection">デバイスがインターネットに接続されていません！</string>
+    <string name="empty_list_no_data">表示するデータはありません！</string>
+    <string name="drawer_item_change_style">スタイルを変更する</string>
+</resources>

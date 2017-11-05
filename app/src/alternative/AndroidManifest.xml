@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cz.muni.fi.pv256.movio2.uco_410034">
+
+    <application
+        android:theme="@style/AppTheme.2"
+        tools:replace="android:theme">
+    </application>
+
+</manifest>

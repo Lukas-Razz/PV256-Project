@@ -1,3 +1,9 @@
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+def versionBuild = 0
+def versionCodeValue = versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+
 apply plugin: 'com.android.application'
 
 android {
@@ -7,19 +13,23 @@ android {
         applicationId "cz.muni.fi.pv256.movio2.uco_410034"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             ndkBuild {
                 arguments "V=1"
             }
         }
+        versionCode versionCodeValue
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        resConfigs "en", "cs"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            versionNameSuffix = ".${versionBuild}-${versionCodeValue}"
         }
     }
     externalNativeBuild {
@@ -27,10 +37,19 @@ android {
             path 'src/main/jni/Android.mk'
         }
     }
+    productFlavors {
+        main {
+            buildConfigField "boolean", "logging", "true"
+        }
+        alternative {
+            applicationIdSuffix '.alternative'
+            buildConfigField "boolean", "logging", "false"
+        }
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
