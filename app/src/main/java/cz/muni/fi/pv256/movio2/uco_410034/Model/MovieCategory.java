@@ -2,6 +2,7 @@ package cz.muni.fi.pv256.movio2.uco_410034.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * Created by lukas on 12.10.2017.
@@ -16,7 +17,7 @@ public class MovieCategory implements Parcelable {
         return mCategoryName;
     }
 
-    public void setCategoryName(String categoryName) {
+    public void setCategoryName(@NonNull String categoryName) {
         this.mCategoryName = categoryName;
     }
 
@@ -24,7 +25,7 @@ public class MovieCategory implements Parcelable {
         return mMovieList;
     }
 
-    public void setMovieList(Movie[] movieList) {
+    public void setMovieList(@NonNull Movie[] movieList) {
         if(movieList.length != 6)
             throw new IllegalArgumentException("Movie list must contain exactly 6 movies.");
 
@@ -61,4 +62,19 @@ public class MovieCategory implements Parcelable {
             return new MovieCategory[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MovieCategory that = (MovieCategory) o;
+
+        return mCategoryName.equals(that.mCategoryName);
+    }
+
+    @Override
+    public int hashCode() {
+        return mCategoryName.hashCode();
+    }
 }

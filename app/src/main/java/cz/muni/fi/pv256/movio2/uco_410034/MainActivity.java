@@ -23,6 +23,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import butterknife.BindBool;
@@ -78,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         else {
             fillDummyData();
         }
+
+        MovieService movieService = new MovieService(((App)getApplication()).getApiKey());
+        Calendar calendar = Calendar.getInstance();
+        Date now = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        Date monthAgo = calendar.getTime();
+        movieService.getMostPopularMovies(new Locale("en-US"), monthAgo, now, "Current Most Popular Movies");
 
         setUpDrawer();
 

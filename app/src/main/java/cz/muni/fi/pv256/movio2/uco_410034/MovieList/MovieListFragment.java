@@ -16,6 +16,8 @@ import org.w3c.dom.Text;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cz.muni.fi.pv256.movio2.uco_410034.DataHolder;
+import cz.muni.fi.pv256.movio2.uco_410034.DataUpdateListener;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.Movie;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
 import cz.muni.fi.pv256.movio2.uco_410034.R;
@@ -24,7 +26,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.R;
  * Created by lukas on 17.10.2017.
  */
 
-public class MovieListFragment extends Fragment implements MovieSelectedListener{
+public class MovieListFragment extends Fragment implements MovieSelectedListener, DataUpdateListener{
 
     @BindView(R.id.movieListView) RecyclerView mMovieListView;
 
@@ -33,7 +35,7 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     private MovieSelectedListener mMovieSelectedListener;
     private MovieListAdapter movieListAdapter;
 
-    private SparseArray<MovieCategory> mMovieCategories;
+    private SparseArray<MovieCategory> mMovieCategories = new SparseArray<>(2);
 
     @Nullable
     @Override
@@ -41,8 +43,9 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
         View view = inflater.inflate(R.layout.fragment_movie_list , container, false);
         ButterKnife.bind(this, view);
 
+        DataHolder.INSTANCE.setDataUpdateListener(this);
         Bundle bundle = getArguments();
-        mMovieCategories = bundle.getSparseParcelableArray(mBundleMovieCategoriesKey);
+        //mMovieCategories = bundle.getSparseParcelableArray(mBundleMovieCategoriesKey);
 
         movieListAdapter = new MovieListAdapter(mMovieCategories);
         movieListAdapter.setMovieSelectedListener(this);
@@ -57,6 +60,7 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     public void onDestroy() {
         mMovieSelectedListener = null;
         movieListAdapter.setMovieSelectedListener(null);
+        DataHolder.INSTANCE.setDataUpdateListener(null);
         super.onDestroy();
     }
 
@@ -67,5 +71,18 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     @Override
     public void onMovieSelected(Movie movie) {
         mMovieSelectedListener.onMovieSelected(movie);
+    }
+
+    @Override
+    public void onDataUpdate(final SparseArray<MovieCategory> movieCategories) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i=0; i<movieCategories.size(); i++) {
+                    mMovieCategories.put(i, movieCategories.get(i));
+                }
+                movieListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
