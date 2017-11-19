@@ -10,24 +10,21 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 import butterknife.BindBool;
 import butterknife.BindString;
@@ -40,28 +37,27 @@ import cz.muni.fi.pv256.movio2.uco_410034.MovieDetail.MovieDetailFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieSelectedListener;
 
-public class MainActivity extends AppCompatActivity implements MovieSelectedListener{
+public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DataUpdateListener{
+
+    private static final String TAG = "MainActivity";
 
     @BindView(R.id.rootLayout) DrawerLayout mDrawerLayout;
     @Nullable @BindView(R.id.contentLayout) FrameLayout mContentLayout;
     @Nullable @BindView(R.id.tabletContentLayout) ConstraintLayout mTabletContentLayout;
     @Nullable @BindView(R.id.leftContentLayout) FrameLayout mLeftContentLayout;
     @Nullable @BindView(R.id.rightContentLayout) FrameLayout mRightContentLayout;
-    @BindView(R.id.emptyView) ViewStub mEmptyView;
+    @BindView(R.id.emptyViewStub) ViewStub mEmptyViewStub;
 
     @BindString(R.string.fragment_movie_list_tag) String fragmentMovieListTag;
     @BindString(R.string.fragment_movie_detail_tag) String fragmentMovieDetailTag;
     @BindString(R.string.shared_pref_name) String sharedPrefName;
     @BindString(R.string.shared_pref_style_key) String sharedPrefStyleKey;
-    @BindString(R.string.bundle_movie_categories_key) String mBundleMovieCategoriesKey;
     @BindString(R.string.bundle_movie_key) String mBundleMovieKey;
     @BindBool(R.bool.isTablet) boolean mIsTablet;
     @BindString(R.string.empty_list_no_connection) String mEmptyListNoConnection;
     @BindString(R.string.empty_list_no_data) String mEmptyListNoData;
 
     private ActionBarDrawerToggle mDrawerToggle;
-
-    private SparseArray<MovieCategory> mMovieCategories = new SparseArray<>(2);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,23 +72,19 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if (savedInstanceState != null) {
-            mMovieCategories = savedInstanceState.getSparseParcelableArray(mBundleMovieCategoriesKey);
-        }
-        else {
-            fillDummyData();
-        }
+        DataHolder.INSTANCE.subscribeDataUpdateListener(this);
 
-        MovieService movieService = new MovieService(((App)getApplication()).getApiKey());
+        MovieAPIClient movieAPIClient = new MovieAPIClient(((App)getApplication()).getApiKey());
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
         calendar.add(Calendar.MONTH, -1);
         Date monthAgo = calendar.getTime();
-        movieService.getMostPopularMovies(new Locale("en-US"), monthAgo, now, "Current Most Popular Movies");
+        movieAPIClient.getMostPopularMovies(new Locale("en-US"), monthAgo, now, "Popular in theatres");
+        movieAPIClient.getMostPopularMovies("R", "Most popular 'R' rated");
 
         setUpDrawer();
 
-        if(isDataEmpty()) {
+        if(DataHolder.INSTANCE.isDataEmpty()) {
             setUpEmptyView();
         }
         else {
@@ -101,12 +93,15 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     }
 
     @Override
+    protected void onDestroy() {
+        DataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
+        super.onDestroy();
+    }
+
+    @Override
     public void onBackPressed() {
         if(!mIsTablet && getSupportFragmentManager().findFragmentByTag(fragmentMovieDetailTag) != null) {
-            Bundle bundle = new Bundle();
-            bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
             MovieListFragment movieListFragment = new MovieListFragment();
-            movieListFragment.setArguments(bundle);
             movieListFragment.setMovieSelectedListener(this);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
             mDrawerToggle.setDrawerIndicatorEnabled(true);
@@ -123,10 +118,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
         switch (item.getItemId()) {
             case android.R.id.home:
-                Bundle bundle = new Bundle();
-                bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
                 MovieListFragment movieListFragment = new MovieListFragment();
-                movieListFragment.setArguments(bundle);
                 movieListFragment.setMovieSelectedListener(this);
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
                 mDrawerToggle.setDrawerIndicatorEnabled(true);
@@ -144,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
     }
 
     private void setUpDrawer() {
@@ -167,37 +158,33 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
 
     private void setUpFragments(Bundle savedInstanceState) {
         if(savedInstanceState == null) {
-
-            Bundle bundle;
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            if (mIsTablet) {
-                MovieListFragment movieListFragment = new MovieListFragment();
-                bundle = new Bundle();
-                bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
-                movieListFragment.setArguments(bundle);
-                movieListFragment.setMovieSelectedListener(this);
-                fragmentTransaction.add(R.id.leftContentLayout, movieListFragment, fragmentMovieListTag);
-                MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-                bundle = new Bundle();
-                bundle.putParcelable(mBundleMovieKey, mMovieCategories.get(0).getMovieList()[0]);
-                movieDetailFragment.setArguments(bundle);
-                fragmentTransaction.add(R.id.rightContentLayout, movieDetailFragment, fragmentMovieDetailTag);
-            } else {
-                MovieListFragment movieListFragment = new MovieListFragment();
-                bundle = new Bundle();
-                bundle.putSparseParcelableArray(mBundleMovieCategoriesKey, mMovieCategories);
-                movieListFragment.setArguments(bundle);
-                movieListFragment.setMovieSelectedListener(this);
-                fragmentTransaction.add(R.id.contentLayout, movieListFragment, fragmentMovieListTag);
-            }
-            fragmentTransaction.commit();
+            setUpFragments();
         }
         else {
             Fragment movieListFragment = getSupportFragmentManager().findFragmentByTag(fragmentMovieListTag);
             if(movieListFragment != null)
                 ((MovieListFragment)movieListFragment).setMovieSelectedListener(this);
         }
+    }
+
+    private void setUpFragments() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (mIsTablet) {
+            MovieListFragment movieListFragment = new MovieListFragment();
+            movieListFragment.setMovieSelectedListener(this);
+            fragmentTransaction.add(R.id.leftContentLayout, movieListFragment, fragmentMovieListTag);
+            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(mBundleMovieKey, DataHolder.INSTANCE.getMovieCategories().get(0).getMovieList()[0]);
+            movieDetailFragment.setArguments(bundle);
+            fragmentTransaction.add(R.id.rightContentLayout, movieDetailFragment, fragmentMovieDetailTag);
+        } else {
+            MovieListFragment movieListFragment = new MovieListFragment();
+            movieListFragment.setMovieSelectedListener(this);
+            fragmentTransaction.add(R.id.contentLayout, movieListFragment, fragmentMovieListTag);
+        }
+        fragmentTransaction.commit();
     }
 
     @OnClick(R.id.drawerChangeStyleButton)
@@ -224,25 +211,6 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         finish();
     }
 
-    private void fillDummyData() {
-        Random random = new Random();
-        for (int i = 0; i < 2; i++) {
-            String name = "Dummy Category #" + i;
-            MovieCategory category = new MovieCategory();
-            category.setCategoryName(name);
-            Movie[] movies = new Movie[6];
-            for (int j = 0; j < 6; j++) {
-                Movie movie = new Movie();
-                movie.setTitle("DummyMovie #" + i + "." + j);
-                movie.setReleaseDate(random.nextInt(2018-1950) + 1950);
-                movie.setPopularity(random.nextFloat() * 5);
-                movies[j] = movie;
-            }
-            category.setMovieList(movies);
-            mMovieCategories.put(i, category);
-        }
-    }
-
     @Override
     public void onMovieSelected(Movie movie) {
 
@@ -259,14 +227,28 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
     }
 
-    private boolean isDataEmpty() {
-        if(mMovieCategories == null)
-            return true;
-        for (int i = 0; i<mMovieCategories.size(); i++) {
-            if (mMovieCategories.get(i) != null)
-                return false;
-        }
-        return true;
+    @Override
+    public void onDataUpdate(SparseArray<MovieCategory> movieCategories) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "Updating data...");
+                View emptyView = findViewById(R.id.emptyView);
+                if(emptyView != null && emptyView.getVisibility() == View.VISIBLE) {
+                    if(mIsTablet) {
+                        mLeftContentLayout.setVisibility(View.VISIBLE);
+                        mRightContentLayout.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.GONE);
+                    }
+                    else {
+                        mContentLayout.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.GONE);
+                    }
+                    setUpFragments();
+                }
+            }
+        });
+
     }
 
     private void setUpEmptyView() {
@@ -279,11 +261,11 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         if(mIsTablet) {
             mLeftContentLayout.setVisibility(View.GONE);
             mRightContentLayout.setVisibility(View.GONE);
-            mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyViewStub.setVisibility(View.VISIBLE);
         }
         else {
             mContentLayout.setVisibility(View.GONE);
-            mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyViewStub.setVisibility(View.VISIBLE);
         }
         ((TextView) findViewById(R.id.emptyListLabel)).setText(emptyLabelText);
     }

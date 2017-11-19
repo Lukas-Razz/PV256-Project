@@ -1,13 +1,18 @@
 package cz.muni.fi.pv256.movio2.uco_410034.MovieList;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -41,16 +46,32 @@ public class MovieListViewHolder extends RecyclerView.ViewHolder {
         mMovieCategoryLabel.setText(movieCategory.getCategoryName());
         for(int i=0; i < mMovieViews.length; i++) {
             Movie movie = movieCategory.getMovieList()[i];
-            mMovieViews[i].getMovieLabel().setText(movie.getTitle());
-            mMovieViews[i].getMovieRatingValue().setText(String.format("%.1f/5", movie.getPopularity()));
+            final MovieView movieView =  mMovieViews[i];
+            movieView.getMovieLabel().setText(movie.getTitle());
+            movieView.getMovieRatingValue().setText(String.format("%.1f/5", movie.getPopularity()));
+            movieView.getMoviePanel().setBackgroundColor(mDefaultColor);
+            final Target picassoTarget = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    movieView.getMovieImage().setImageBitmap(bitmap);
+                    View panel = movieView.getMoviePanel();
+                    if (bitmap != null && !bitmap.isRecycled()) {
+                        panel.setBackgroundColor(Palette.from(bitmap).generate().getVibrantColor(mDefaultColor));
+                    }
+                }
 
-            View panel = mMovieViews[i].getMoviePanel();
-            Bitmap dummyImage = BitmapFactory.decodeResource(itemView.getResources(), R.mipmap.ic_launcher);
-            int panelBackgroudColor = mDefaultColor;
-            if (dummyImage != null && !dummyImage.isRecycled()) {
-                panelBackgroudColor = Palette.from(dummyImage).generate().getVibrantColor(mDefaultColor);
-            }
-            panel.setBackgroundColor(panelBackgroudColor);
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+            movieView.getMovieImage().setTag(picassoTarget);
+            Picasso.with(this.itemView.getContext())
+                    .load(String.format("https://image.tmdb.org/t/p/w250_and_h141_bestv2/%s", movie.getBackdrop()))
+                    .into(picassoTarget);
         }
 
     }

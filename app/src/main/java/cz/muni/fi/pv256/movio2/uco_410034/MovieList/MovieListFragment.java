@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,8 @@ import cz.muni.fi.pv256.movio2.uco_410034.R;
 
 public class MovieListFragment extends Fragment implements MovieSelectedListener, DataUpdateListener{
 
+    private static final String TAG = "MovieListFragment";
+
     @BindView(R.id.movieListView) RecyclerView mMovieListView;
 
     @BindString(R.string.bundle_movie_categories_key) String mBundleMovieCategoriesKey;
@@ -35,7 +38,7 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     private MovieSelectedListener mMovieSelectedListener;
     private MovieListAdapter movieListAdapter;
 
-    private SparseArray<MovieCategory> mMovieCategories = new SparseArray<>(2);
+    private SparseArray<MovieCategory> mMovieCategories;
 
     @Nullable
     @Override
@@ -43,9 +46,8 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
         View view = inflater.inflate(R.layout.fragment_movie_list , container, false);
         ButterKnife.bind(this, view);
 
-        DataHolder.INSTANCE.setDataUpdateListener(this);
-        Bundle bundle = getArguments();
-        //mMovieCategories = bundle.getSparseParcelableArray(mBundleMovieCategoriesKey);
+        mMovieCategories = DataHolder.INSTANCE.getMovieCategories();
+        DataHolder.INSTANCE.subscribeDataUpdateListener(this);
 
         movieListAdapter = new MovieListAdapter(mMovieCategories);
         movieListAdapter.setMovieSelectedListener(this);
@@ -60,7 +62,7 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     public void onDestroy() {
         mMovieSelectedListener = null;
         movieListAdapter.setMovieSelectedListener(null);
-        DataHolder.INSTANCE.setDataUpdateListener(null);
+        DataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
         super.onDestroy();
     }
 
@@ -78,6 +80,7 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.i(TAG, "Updating Data...");
                 for(int i=0; i<movieCategories.size(); i++) {
                     mMovieCategories.put(i, movieCategories.get(i));
                 }

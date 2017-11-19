@@ -10,7 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -30,6 +33,9 @@ public class MovieDetailFragment extends Fragment {
     @BindView(R.id.movieDetailCollapsingMovieTitleLabel) TextView mMovieDetailCollapsingMovieTitleLabel;
     @BindView(R.id.movieDetailCollapsingMovieYearLabel) TextView mMovieDetailCollapsingMovieYearLabel;
     @BindView(R.id.movieDetailCollapsingMovieDirectorLabel) TextView mMovieDetailCollapsingMovieDirectorLabel;
+    @BindView(R.id.movieDetailDescription) TextView mMovieDetailDescription;
+    @BindView(R.id.movieDetailCollapsingUpperImage) ImageView mMovieDetailCollapsingUpperImage;
+    @BindView(R.id.movieDetailCollapsingMovieImage) ImageView mMovieDetailCollapsingMovieImage;
 
     @BindString(R.string.bundle_movie_key) String mBundleMovieKey;
 
@@ -42,24 +48,31 @@ public class MovieDetailFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         Bundle bundle = getArguments();
-        mMovie = bundle.getParcelable(mBundleMovieKey);
+        if(bundle != null) {
+            mMovie = bundle.getParcelable(mBundleMovieKey);
 
-        mMovieDetailCollapsingMovieTitleLabel.setText(mMovie.getTitle());
-        mMovieDetailCollapsingMovieYearLabel.setText(Long.toString(mMovie.getReleaseDate()));
-        mMovieDetailCollapsingMovieDirectorLabel.setText("Director Name");
+            mMovieDetailCollapsingMovieTitleLabel.setText(mMovie.getTitle());
+            mMovieDetailCollapsingMovieYearLabel.setText(Long.toString(mMovie.getReleaseDate()));
+            mMovieDetailCollapsingMovieDirectorLabel.setText("Director Name");
+            mMovieDetailDescription.setText(mMovie.getDescription());
+            Picasso.with(getContext())
+                    .load(String.format("https://image.tmdb.org/t/p/w250_and_h141_bestv2/%s", mMovie.getBackdrop()))
+                    .into(mMovieDetailCollapsingUpperImage);
+            Picasso.with(getContext())
+                    .load(String.format("https://image.tmdb.org/t/p/w640/%s", mMovie.getCoverPath()))
+                    .into(mMovieDetailCollapsingMovieImage);
 
-        mMovieDetailAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (verticalOffset == -mMovieDetailCollapsingLayout.getHeight() + mMovieDetailCollapsingToolbar.getHeight()) {
-                    mMovieDetailCollapsingLayout.setTitle(mMovie.getTitle());
+            mMovieDetailAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                    if (verticalOffset == -mMovieDetailCollapsingLayout.getHeight() + mMovieDetailCollapsingToolbar.getHeight()) {
+                        mMovieDetailCollapsingLayout.setTitle(mMovie.getTitle());
+                    } else {
+                        mMovieDetailCollapsingLayout.setTitle("");
+                    }
                 }
-                else {
-                    mMovieDetailCollapsingLayout.setTitle("");
-                }
-            }
-        });
-
+            });
+        }
         return view;
     }
 }

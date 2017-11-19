@@ -23,15 +23,15 @@ import okhttp3.Response;
  * Created by lukas on 17.11.2017.
  */
 
-public class MovieService {
+public class MovieAPIClient {
 
-    private static final String TAG = "MovieService";
+    private static final String TAG = "MovieAPIClient";
 
     private OkHttpClient mClient = new OkHttpClient();
     private String mApiKey;
 
 
-    public MovieService(String apiKey) {
+    public MovieAPIClient(String apiKey) {
         this.mApiKey = apiKey;
     }
 
@@ -91,6 +91,7 @@ public class MovieService {
                     movie.setBackdrop(discoverMovies.results[i].backdrop_path);
                     movie.setCoverPath(discoverMovies.results[i].poster_path);
                     movie.setReleaseDate(Long.valueOf(discoverMovies.results[i].release_date.split("-")[0]));
+                    movie.setDescription(discoverMovies.results[i].overview);
                     movieList[i] = movie;
                 }
                 movieCategory.setMovieList(movieList);
