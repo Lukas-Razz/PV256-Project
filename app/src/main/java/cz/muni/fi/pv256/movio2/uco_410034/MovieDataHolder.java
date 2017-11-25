@@ -11,7 +11,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
  * Created by lukas on 18.11.2017.
  */
 
-public enum DataHolder {
+public enum MovieDataHolder {
     INSTANCE;
 
     private List<DataUpdateListener> mDataUpdateListeners = new ArrayList<>(2);
@@ -23,18 +23,6 @@ public enum DataHolder {
 
     public void setMovieCategories(SparseArray<MovieCategory> movieCategories) {
         this.mMovieCategories = movieCategories;
-        for(int i=0; i<mDataUpdateListeners.size(); i++)
-            mDataUpdateListeners.get(i).onDataUpdate(this.mMovieCategories);
-    }
-
-    public void putMovieCategory(MovieCategory movieCategory) {
-        int index = mMovieCategories.indexOfValue(movieCategory);
-        if(index < 0) {
-            mMovieCategories.append(mMovieCategories.size(), movieCategory);
-        }
-        else {
-            mMovieCategories.put(index, movieCategory);
-        }
         for(int i=0; i<mDataUpdateListeners.size(); i++)
             mDataUpdateListeners.get(i).onDataUpdate(this.mMovieCategories);
     }

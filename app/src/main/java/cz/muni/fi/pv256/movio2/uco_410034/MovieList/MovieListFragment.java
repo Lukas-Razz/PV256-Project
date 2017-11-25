@@ -10,14 +10,11 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cz.muni.fi.pv256.movio2.uco_410034.DataHolder;
+import cz.muni.fi.pv256.movio2.uco_410034.MovieDataHolder;
 import cz.muni.fi.pv256.movio2.uco_410034.DataUpdateListener;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.Movie;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
@@ -27,7 +24,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.R;
  * Created by lukas on 17.10.2017.
  */
 
-public class MovieListFragment extends Fragment implements MovieSelectedListener, DataUpdateListener{
+public class MovieListFragment extends Fragment implements MovieSelectedListener, DataUpdateListener {
 
     private static final String TAG = "MovieListFragment";
 
@@ -46,8 +43,8 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
         View view = inflater.inflate(R.layout.fragment_movie_list , container, false);
         ButterKnife.bind(this, view);
 
-        mMovieCategories = DataHolder.INSTANCE.getMovieCategories();
-        DataHolder.INSTANCE.subscribeDataUpdateListener(this);
+        mMovieCategories = MovieDataHolder.INSTANCE.getMovieCategories();
+        MovieDataHolder.INSTANCE.subscribeDataUpdateListener(this);
 
         movieListAdapter = new MovieListAdapter(mMovieCategories);
         movieListAdapter.setMovieSelectedListener(this);
@@ -62,7 +59,7 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     public void onDestroy() {
         mMovieSelectedListener = null;
         movieListAdapter.setMovieSelectedListener(null);
-        DataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
+        MovieDataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
         super.onDestroy();
     }
 
