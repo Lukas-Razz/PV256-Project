@@ -15,13 +15,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +36,7 @@ import butterknife.BindBool;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.Movie;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieQuery;
@@ -49,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @Nullable @BindView(R.id.leftContentLayout) FrameLayout mLeftContentLayout;
     @Nullable @BindView(R.id.rightContentLayout) FrameLayout mRightContentLayout;
     @BindView(R.id.emptyViewStub) ViewStub mEmptyViewStub;
+    SwitchCompat mActionBarSwitch;
+    TextView mActionBarSwitchLabel;
 
     @BindString(R.string.fragment_movie_list_tag) String fragmentMovieListTag;
     @BindString(R.string.fragment_movie_detail_tag) String fragmentMovieDetailTag;
@@ -58,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @BindBool(R.bool.isTablet) boolean mIsTablet;
     @BindString(R.string.empty_list_no_connection) String mEmptyListNoConnection;
     @BindString(R.string.empty_list_no_data) String mEmptyListNoData;
+    @BindString(R.string.actionbar_switch_label_discover) String mActionBarSwitchLabelDiscover;
+    @BindString(R.string.actionbar_switch_label_favorites) String mActionBarSwitchLabelFavorites;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private MovieDataBroadcastReceiver mMovieDataBroadcastReceiver;
@@ -134,6 +144,29 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem item = menu.findItem(R.id.menuSwitch);
+        item.setActionView(R.layout.menu_switch);
+        mActionBarSwitch = item.getActionView().findViewById(R.id.actionBarSwitch);
+        mActionBarSwitchLabel = item.getActionView().findViewById(R.id.actionBarSwitchLabel);
+        mActionBarSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(mActionBarSwitchLabel.getText() == mActionBarSwitchLabelDiscover) {
+                    mActionBarSwitchLabel.setText(mActionBarSwitchLabelFavorites);
+                    //Show favorites
+                }
+                else {
+                    mActionBarSwitchLabel.setText(mActionBarSwitchLabelDiscover);
+                    //Show discover
+                }
+            }
+        });
+        return true;
     }
 
     @Override

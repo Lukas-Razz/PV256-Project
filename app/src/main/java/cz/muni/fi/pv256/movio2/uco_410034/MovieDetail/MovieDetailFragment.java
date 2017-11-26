@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +34,7 @@ public class MovieDetailFragment extends Fragment {
     @BindView(R.id.movieDetailCollapsingLayout) CollapsingToolbarLayout mMovieDetailCollapsingLayout;
     @BindView(R.id.movieDetailCollapsingToolbar) Toolbar mMovieDetailCollapsingToolbar;
     @BindView(R.id.movieDetailCollapsingMovieTitleLabel) TextView mMovieDetailCollapsingMovieTitleLabel;
-    @BindView(R.id.movieDetailCollapsingMovieYearLabel) TextView mMovieDetailCollapsingMovieYearLabel;
+    @BindView(R.id.movieDetailCollapsingMovieDateLabel) TextView mMovieDetailCollapsingMovieDateLabel;
     @BindView(R.id.movieDetailCollapsingMovieDirectorLabel) TextView mMovieDetailCollapsingMovieDirectorLabel;
     @BindView(R.id.movieDetailDescription) TextView mMovieDetailDescription;
     @BindView(R.id.movieDetailCollapsingUpperImage) ImageView mMovieDetailCollapsingUpperImage;
@@ -52,7 +55,7 @@ public class MovieDetailFragment extends Fragment {
             mMovie = bundle.getParcelable(mBundleMovieKey);
 
             mMovieDetailCollapsingMovieTitleLabel.setText(mMovie.getTitle());
-            mMovieDetailCollapsingMovieYearLabel.setText(Long.toString(mMovie.getReleaseDate()));
+            mMovieDetailCollapsingMovieDateLabel.setText(new SimpleDateFormat("yyyy-mm-dd").format(new Date(mMovie.getReleaseDate())));
             mMovieDetailCollapsingMovieDirectorLabel.setText("Director Name");
             mMovieDetailDescription.setText(mMovie.getDescription());
             Picasso.with(getContext())
