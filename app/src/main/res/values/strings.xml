@@ -5,4 +5,13 @@
     <string name="close_drawer">Close drawer</string>
     <string name="shared_pref_name">cz.muni.fi.pv256.movio2.uco_410034</string>
     <string name="shared_pref_style_key">appStyle</string>
+    <string name="bundle_movie_categories_key">movieCategories</string>
+    <string name="bundle_movie_key">movie</string>
+    <string name="fragment_movie_list_tag">fragmentMovieList</string>
+    <string name="fragment_movie_detail_tag">fragmentMovieDetail</string>
+
+
+    <string name="loremIpsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fames ac turpis egestas sed tempus urna et. Pretium nibh ipsum consequat nisl vel. Laoreet sit amet cursus sit. Convallis posuere morbi leo urna molestie. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Cursus vitae congue mauris rhoncus. Est lorem ipsum dolor sit amet. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique. Pulvinar elementum integer enim neque volutpat. Felis imperdiet proin fermentum leo.
+
+Lectus magna fringilla urna porttitor rhoncus dolor. Sagittis vitae et leo duis ut diam quam nulla. Et leo duis ut diam quam nulla porttitor massa. Sit amet venenatis urna cursus eget nunc scelerisque. Mi eget mauris pharetra et ultrices neque ornare aenean euismod. Iaculis nunc sed augue lacus viverra vitae congue. In ornare quam viverra orci sagittis eu volutpat odio. Sit amet nisl suscipit adipiscing bibendum est ultricies integer. Molestie ac feugiat sed lectus vestibulum mattis. Egestas dui id ornare arcu odio ut sem. Pellentesque adipiscing commodo elit at imperdiet dui. Maecenas pharetra convallis posuere morbi leo urna molestie at elementum. Nam libero justo laoreet sit amet cursus sit. In pellentesque massa placerat duis ultricies lacus sed turpis. Nibh tellus molestie nunc non blandit. Neque vitae tempus quam pellentesque nec nam aliquam sem.</string>
 </resources>
