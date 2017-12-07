@@ -1,13 +1,16 @@
 package cz.muni.fi.pv256.movio2.uco_410034;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.facebook.stetho.Stetho;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
+import cz.muni.fi.pv256.movio2.uco_410034.Db.MovieDatabase;
 import okhttp3.OkHttpClient;
 
 /**
@@ -32,6 +35,8 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             initStrictMode();
         }
+
+        Stetho.initializeWithDefaults(this);
 
         OkHttpClient client = new OkHttpClient();
         Picasso picasso = new Picasso.Builder(getApplicationContext())
