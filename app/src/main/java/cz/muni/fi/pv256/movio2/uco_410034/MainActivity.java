@@ -1,5 +1,7 @@
 package cz.muni.fi.pv256.movio2.uco_410034;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -357,21 +359,28 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         ((TextView) findViewById(R.id.emptyListLabel)).setText(emptyLabelText);
     }
 
-    private LoaderManager.LoaderCallbacks<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>> mLoaderCallbacks =
-            new LoaderManager.LoaderCallbacks<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>() {
+    private LoaderManager.LoaderCallbacks<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> mLoaderCallbacks =
+            new LoaderManager.LoaderCallbacks<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>>() {
         @Override
-        public Loader<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>> onCreateLoader(int id, Bundle args) {
+        public Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> onCreateLoader(int id, Bundle args) {
             return mLoader;
         }
 
         @Override
-        public void onLoadFinished(Loader<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>> loader, List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie> data) {
-            List<Movie> favoriteMovies = MovieMapper.INSTANCE.dbMovieToMovie(data);
+        public void onLoadFinished(Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> loader, LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>> data) {
+
+            data.observe(MainActivity.this, new Observer<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>() {
+                @Override
+                public void onChanged(@Nullable List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie> movies) {
+                    MovieDataHolder.INSTANCE.setFavoriteMovies(MovieMapper.INSTANCE.dbMovieToMovie(movies));
+                }
+            });
+            List<Movie> favoriteMovies = MovieMapper.INSTANCE.dbMovieToMovie(data.getValue());
             MovieDataHolder.INSTANCE.setFavoriteMovies(favoriteMovies);
         }
 
         @Override
-        public void onLoaderReset(Loader<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>> loader) {
+        public void onLoaderReset(Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> loader) {
         }
     };
 }

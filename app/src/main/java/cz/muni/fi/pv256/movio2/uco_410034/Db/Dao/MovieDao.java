@@ -1,5 +1,6 @@
 package cz.muni.fi.pv256.movio2.uco_410034.Db.Dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -18,7 +19,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie;
 public interface MovieDao {
 
     @Query("SELECT * FROM movie")
-    List<Movie> getAll();
+    LiveData<List<Movie>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Movie... movie);
