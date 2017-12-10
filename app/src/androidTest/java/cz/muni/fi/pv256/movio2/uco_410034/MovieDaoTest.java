@@ -1,7 +1,6 @@
 package cz.muni.fi.pv256.movio2.uco_410034;
 
 import android.arch.persistence.room.Room;
-import android.test.InstrumentationTestCase;
 import android.test.mock.MockContext;
 
 import org.junit.After;
@@ -9,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Array;
 import java.util.List;
 
 import cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie;
@@ -36,7 +34,6 @@ public class MovieDaoTest {
     @Test
     public void getAll_MovieList_ThreeMovies() {
         Movie m1 = new Movie();
-        m1.setId(1);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
@@ -44,7 +41,6 @@ public class MovieDaoTest {
         m1.setReleaseDate(123456789);
         m1.setTitle("M1");
         Movie m2 = new Movie();
-        m1.setId(2);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
@@ -52,18 +48,17 @@ public class MovieDaoTest {
         m1.setReleaseDate(123456789);
         m1.setTitle("M2");
         Movie m3 = new Movie();
-        m1.setId(3);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
         m1.setDescription("blabla");
         m1.setReleaseDate(123456789);
         m1.setTitle("M3");
-        mDatabase.mMovieDao().insert(m1);
-        mDatabase.mMovieDao().insert(m2);
-        mDatabase.mMovieDao().insert(m3);
+        mDatabase.movieDao().insert(m1);
+        mDatabase.movieDao().insert(m2);
+        mDatabase.movieDao().insert(m3);
 
-        List<Movie> movies = mDatabase.mMovieDao().getAll();
+        List<Movie> movies = mDatabase.movieDao().getAll();
 
         Assert.assertTrue(movies.size() == 3);
     }
@@ -71,7 +66,6 @@ public class MovieDaoTest {
     @Test
     public void insert_MovieInserted_ValidMovie() {
         Movie m1 = new Movie();
-        m1.setId(1);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
@@ -79,9 +73,9 @@ public class MovieDaoTest {
         m1.setReleaseDate(123456789);
         m1.setTitle("M1");
 
-        mDatabase.mMovieDao().insert(m1);
+        mDatabase.movieDao().insert(m1);
 
-        List<Movie> movies = mDatabase.mMovieDao().getAll();
+        List<Movie> movies = mDatabase.movieDao().getAll();
 
         Assert.assertTrue(movies.size() == 1);
     }
@@ -89,7 +83,6 @@ public class MovieDaoTest {
     @Test
     public void delete_MovieDeleted_ValidMovie() {
         Movie m1 = new Movie();
-        m1.setId(1);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
@@ -97,10 +90,10 @@ public class MovieDaoTest {
         m1.setReleaseDate(123456789);
         m1.setTitle("M1");
 
-        mDatabase.mMovieDao().insert(m1);
-        mDatabase.mMovieDao().delete(m1);
+        mDatabase.movieDao().insert(m1);
+        mDatabase.movieDao().delete(m1);
 
-        List<Movie> movies = mDatabase.mMovieDao().getAll();
+        List<Movie> movies = mDatabase.movieDao().getAll();
 
         Assert.assertTrue(movies.size() == 0);
     }

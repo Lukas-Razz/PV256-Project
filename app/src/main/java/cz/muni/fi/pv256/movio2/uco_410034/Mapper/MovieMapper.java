@@ -21,7 +21,6 @@ public interface MovieMapper {
     Movie[] dbMovieToMovie(cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie[] movie);
     List<Movie> dbMovieToMovie(List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie> movie);
 
-    @Mapping(target = "id", ignore = true)
     cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie movieToDbMovie(Movie movie);
     cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie[] movieToDbMovie(Movie[] movie);
     List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie> movieToDbMovie(List<Movie> movie);

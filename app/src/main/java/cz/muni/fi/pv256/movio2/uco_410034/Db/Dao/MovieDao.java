@@ -19,7 +19,10 @@ import cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie;
 public interface MovieDao {
 
     @Query("SELECT * FROM movie")
-    LiveData<List<Movie>> getAll();
+    LiveData<List<Movie>> liveGetAll();
+
+    @Query("SELECT * FROM movie")
+    List<Movie> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Movie... movie);

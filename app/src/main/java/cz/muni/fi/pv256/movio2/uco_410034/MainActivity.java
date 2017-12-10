@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         mMovieDataBroadcastReceiver = new MovieDataBroadcastReceiver();
         registerReceiver(mMovieDataBroadcastReceiver, filter);
 
-        mLoader = new MovieLoader(getApplicationContext(), MovieDatabase.getInstance(getApplicationContext()).mMovieDao());
+        mLoader = new MovieLoader(getApplicationContext(), MovieDatabase.getInstance(getApplicationContext()).movieDao());
         getSupportLoaderManager().initLoader(1, null, mLoaderCallbacks);
         mLoader.startLoading();
 
@@ -147,10 +147,18 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @Override
     public void onBackPressed() {
         if(!mIsTablet && getSupportFragmentManager().findFragmentByTag(fragmentMovieDetailTag) != null) {
-            MovieListFragment movieListFragment = new MovieListFragment();
-            movieListFragment.setMovieSelectedListener(this);
-            getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
-            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            if(mActionBarSwitch.isChecked()) {
+                MovieFavoriteListFragment movieFavoriteListFragment = new MovieFavoriteListFragment();
+                movieFavoriteListFragment.setMovieSelectedListener(this);
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieFavoriteListFragment, fragmentMovieFavoriteDetailTag).commit();
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
+            else {
+                MovieListFragment movieListFragment = new MovieListFragment();
+                movieListFragment.setMovieSelectedListener(this);
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
         }
         else {
             super.onBackPressed();
@@ -167,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         mActionBarSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(mActionBarSwitchLabel.getText() == mActionBarSwitchLabelDiscover) {
+                if(mActionBarSwitch.isChecked()) {
                     //Show favorites
                     mActionBarSwitchLabel.setText(mActionBarSwitchLabelFavorites);
                     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -207,10 +215,18 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
         switch (item.getItemId()) {
             case android.R.id.home:
-                MovieListFragment movieListFragment = new MovieListFragment();
-                movieListFragment.setMovieSelectedListener(this);
-                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
-                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                if(mActionBarSwitch.isChecked()) {
+                    MovieFavoriteListFragment movieFavoriteListFragment = new MovieFavoriteListFragment();
+                    movieFavoriteListFragment.setMovieSelectedListener(this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieFavoriteListFragment, fragmentMovieFavoriteDetailTag).commit();
+                    mDrawerToggle.setDrawerIndicatorEnabled(true);
+                }
+                else {
+                    MovieListFragment movieListFragment = new MovieListFragment();
+                    movieListFragment.setMovieSelectedListener(this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+                    mDrawerToggle.setDrawerIndicatorEnabled(true);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -375,8 +391,6 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
                     MovieDataHolder.INSTANCE.setFavoriteMovies(MovieMapper.INSTANCE.dbMovieToMovie(movies));
                 }
             });
-            List<Movie> favoriteMovies = MovieMapper.INSTANCE.dbMovieToMovie(data.getValue());
-            MovieDataHolder.INSTANCE.setFavoriteMovies(favoriteMovies);
         }
 
         @Override

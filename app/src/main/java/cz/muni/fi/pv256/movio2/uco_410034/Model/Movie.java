@@ -102,4 +102,33 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Movie movie = (Movie) o;
+
+        if (getReleaseDate() != movie.getReleaseDate()) return false;
+        if (Float.compare(movie.getPopularity(), getPopularity()) != 0) return false;
+        if (getCoverPath() != null ? !getCoverPath().equals(movie.getCoverPath()) : movie.getCoverPath() != null)
+            return false;
+        if (getTitle() != null ? !getTitle().equals(movie.getTitle()) : movie.getTitle() != null)
+            return false;
+        if (getBackdrop() != null ? !getBackdrop().equals(movie.getBackdrop()) : movie.getBackdrop() != null)
+            return false;
+        return getDescription() != null ? getDescription().equals(movie.getDescription()) : movie.getDescription() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
+        result = 31 * result + (getCoverPath() != null ? getCoverPath().hashCode() : 0);
+        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
+        result = 31 * result + (getBackdrop() != null ? getBackdrop().hashCode() : 0);
+        result = 31 * result + (getPopularity() != +0.0f ? Float.floatToIntBits(getPopularity()) : 0);
+        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
+        return result;
+    }
 }

@@ -8,9 +8,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +88,7 @@ public class MovieDetailFragment extends Fragment implements FavoriteDataUpdateL
                 }
             });
         }
+        MovieDataHolder.INSTANCE.subscribeFavoriteDataUpdateListener(this);
         if(MovieDataHolder.INSTANCE.getFavoriteMovies().contains(mMovie)) {
             mFloatingActionButton.setImageDrawable(mRemoveIcon);
         }
@@ -107,10 +106,10 @@ public class MovieDetailFragment extends Fragment implements FavoriteDataUpdateL
             @Override
             protected Void doInBackground(Movie... movies) {
                 if(favorite) {
-                    MovieDatabase.getInstance(getContext()).mMovieDao().delete(MovieMapper.INSTANCE.movieToDbMovie(movies));
+                    MovieDatabase.getInstance(getContext()).movieDao().delete(MovieMapper.INSTANCE.movieToDbMovie(movies));
                 }
                 else {
-                    MovieDatabase.getInstance(getContext()).mMovieDao().insert(MovieMapper.INSTANCE.movieToDbMovie(movies));
+                    MovieDatabase.getInstance(getContext()).movieDao().insert(MovieMapper.INSTANCE.movieToDbMovie(movies));
                 }
                 return null;
             }

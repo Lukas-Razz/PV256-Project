@@ -1,22 +1,14 @@
 package cz.muni.fi.pv256.movio2.uco_410034;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.ContentObserver;
-import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.muni.fi.pv256.movio2.uco_410034.Db.Dao.MovieDao;
 import cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie;
-import cz.muni.fi.pv256.movio2.uco_410034.Mapper.MovieMapper;
 
 /**
  * Created by lukas on 07.12.2017.
@@ -40,7 +32,7 @@ public class MovieLoader extends AsyncTaskLoader<LiveData<List<Movie>>> {
     @Override
     public LiveData<List<Movie>> loadInBackground() {
         Log.i(TAG, "loadInBackground");
-        mData = mMovieDao.getAll();
+        mData = mMovieDao.liveGetAll();
         return mData;
     }
 

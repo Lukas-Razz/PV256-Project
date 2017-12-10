@@ -3,6 +3,7 @@ package cz.muni.fi.pv256.movio2.uco_410034.Db.Model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by lukas on 06.12.2017.
@@ -11,16 +12,14 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "movie")
 public class Movie {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int mId;
-
     @ColumnInfo(name = "release_date")
     private long mReleaseDate;
 
     @ColumnInfo(name = "cover_path")
     private String mCoverPath;
 
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "title")
     private String mTitle;
 
@@ -32,14 +31,6 @@ public class Movie {
 
     @ColumnInfo(name = "description")
     private String mDescription;
-
-    public int getId() {
-        return mId;
-    }
-
-    public void setId(int id) {
-        mId = id;
-    }
 
     public long getReleaseDate() {
         return mReleaseDate;
@@ -100,8 +91,7 @@ public class Movie {
         if (Float.compare(movie.getPopularity(), getPopularity()) != 0) return false;
         if (getCoverPath() != null ? !getCoverPath().equals(movie.getCoverPath()) : movie.getCoverPath() != null)
             return false;
-        if (getTitle() != null ? !getTitle().equals(movie.getTitle()) : movie.getTitle() != null)
-            return false;
+        if (!getTitle().equals(movie.getTitle())) return false;
         if (getBackdrop() != null ? !getBackdrop().equals(movie.getBackdrop()) : movie.getBackdrop() != null)
             return false;
         return getDescription() != null ? getDescription().equals(movie.getDescription()) : movie.getDescription() == null;
@@ -111,7 +101,7 @@ public class Movie {
     public int hashCode() {
         int result = (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
         result = 31 * result + (getCoverPath() != null ? getCoverPath().hashCode() : 0);
-        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
+        result = 31 * result + getTitle().hashCode();
         result = 31 * result + (getBackdrop() != null ? getBackdrop().hashCode() : 0);
         result = 31 * result + (getPopularity() != +0.0f ? Float.floatToIntBits(getPopularity()) : 0);
         result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
