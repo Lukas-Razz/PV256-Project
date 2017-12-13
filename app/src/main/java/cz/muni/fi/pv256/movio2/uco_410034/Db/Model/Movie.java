@@ -12,13 +12,16 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "movie")
 public class Movie {
 
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private long mId;
+
     @ColumnInfo(name = "release_date")
     private long mReleaseDate;
 
     @ColumnInfo(name = "cover_path")
     private String mCoverPath;
 
-    @PrimaryKey
     @NonNull
     @ColumnInfo(name = "title")
     private String mTitle;
@@ -31,6 +34,14 @@ public class Movie {
 
     @ColumnInfo(name = "description")
     private String mDescription;
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
+    }
 
     public long getReleaseDate() {
         return mReleaseDate;
@@ -87,6 +98,7 @@ public class Movie {
 
         Movie movie = (Movie) o;
 
+        if (getId() != movie.getId()) return false;
         if (getReleaseDate() != movie.getReleaseDate()) return false;
         if (Float.compare(movie.getPopularity(), getPopularity()) != 0) return false;
         if (getCoverPath() != null ? !getCoverPath().equals(movie.getCoverPath()) : movie.getCoverPath() != null)
@@ -99,7 +111,8 @@ public class Movie {
 
     @Override
     public int hashCode() {
-        int result = (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
+        int result = (int) (getId() ^ (getId() >>> 32));
+        result = 31 * result + (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
         result = 31 * result + (getCoverPath() != null ? getCoverPath().hashCode() : 0);
         result = 31 * result + getTitle().hashCode();
         result = 31 * result + (getBackdrop() != null ? getBackdrop().hashCode() : 0);

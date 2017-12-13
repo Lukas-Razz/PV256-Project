@@ -49,6 +49,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.MovieDetail.MovieDetailFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieFavorite.MovieFavoriteListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieSelectedListener;
+import cz.muni.fi.pv256.movio2.uco_410034.Sync.FavoriteMovieSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DiscoverDataUpdateListener {
 
@@ -112,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         else {
             setUpFragments(savedInstanceState);
         }
+
+        FavoriteMovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     private void requestData() {

@@ -5,26 +5,19 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.google.gson.Gson;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import cz.muni.fi.pv256.movio2.uco_410034.Api.*;
 import cz.muni.fi.pv256.movio2.uco_410034.Api.Model.DiscoverMovies;
-import cz.muni.fi.pv256.movio2.uco_410034.Api.Model.Movie;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieQuery;
 
@@ -63,7 +56,7 @@ public class MovieDataIntentService extends IntentService {
                 @Override
                 public MovieCategory call() throws Exception {
                     MovieAPIClient client = new MovieAPIClient();
-                    DiscoverMovies response = client.call(((App) getApplication()).getApiKey(), query);
+                    DiscoverMovies response = client.discoverMovies(((App) getApplication()).getApiKey(), query);
 
                     MovieCategory movieCategory = new MovieCategory();
                     movieCategory.setCategoryName(query.getLabel());

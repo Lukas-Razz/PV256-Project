@@ -28,7 +28,7 @@ public class MovieAPIClient {
 
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
 
-    public DiscoverMovies call(String apiKey, MovieQuery query) throws IOException {
+    public DiscoverMovies discoverMovies(String apiKey, MovieQuery query) throws IOException {
 
         Gson gson = new GsonBuilder().setLenient().create();
 
@@ -56,9 +56,40 @@ public class MovieAPIClient {
             }
             else {
                 if(response.errorBody() != null)
-                    throw new IOException("API call failed" + response.errorBody().toString());
+                    throw new IOException("API discoverMovies failed" + response.errorBody().toString());
                 else
-                    throw new IOException("API call failed");
+                    throw new IOException("API discoverMovies failed");
+            }
+        }
+        catch (IOException ex) {
+            throw ex;
+        }
+    }
+
+    public Movie getMovie(String apiKey, int id) throws IOException {
+        Gson gson = new GsonBuilder().setLenient().create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        MovieAPI movieAPI = retrofit.create(MovieAPI.class);
+
+
+        Call<Movie> call = movieAPI.getMovie(apiKey, id);
+        try {
+            Log.i(TAG, call.request().toString());
+            Response<Movie> response = call.execute();
+            Log.i(TAG, response.toString());
+            if(response.isSuccessful() && response.body() != null) {
+                return response.body();
+            }
+            else {
+                if(response.errorBody() != null)
+                    throw new IOException("API getMovie failed" + response.errorBody().toString());
+                else
+                    throw new IOException("API getMovie failed");
             }
         }
         catch (IOException ex) {

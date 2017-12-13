@@ -9,12 +9,21 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
+    private long mId;
     private long mReleaseDate;
     private String mCoverPath;
     private String mTitle;
     private String mBackdrop;
     private float mPopularity;
     private String mDescription;
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        this.mId = id;
+    }
 
     public long getReleaseDate() {
         return mReleaseDate;
@@ -71,6 +80,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mId);
         dest.writeLong(this.mReleaseDate);
         dest.writeString(this.mCoverPath);
         dest.writeString(this.mTitle);
@@ -83,6 +93,7 @@ public class Movie implements Parcelable {
     }
 
     protected Movie(Parcel in) {
+        this.mId = in.readLong();
         this.mReleaseDate = in.readLong();
         this.mCoverPath = in.readString();
         this.mTitle = in.readString();
@@ -110,6 +121,7 @@ public class Movie implements Parcelable {
 
         Movie movie = (Movie) o;
 
+        if (getId() != movie.getId()) return false;
         if (getReleaseDate() != movie.getReleaseDate()) return false;
         if (Float.compare(movie.getPopularity(), getPopularity()) != 0) return false;
         if (getCoverPath() != null ? !getCoverPath().equals(movie.getCoverPath()) : movie.getCoverPath() != null)
@@ -123,7 +135,8 @@ public class Movie implements Parcelable {
 
     @Override
     public int hashCode() {
-        int result = (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
+        int result = (int) (getId() ^ (getId() >>> 32));
+        result = 31 * result + (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
         result = 31 * result + (getCoverPath() != null ? getCoverPath().hashCode() : 0);
         result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
         result = 31 * result + (getBackdrop() != null ? getBackdrop().hashCode() : 0);

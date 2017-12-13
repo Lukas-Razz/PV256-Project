@@ -24,4 +24,8 @@ public interface MovieAPI {
                                         @Query("primary_release_date.lte") String releaseDateTo,
                                         @Query("certification_country") String certificationCountry,
                                         @Query("certification") String certification);
+
+    @GET("movie")
+    Call<Movie> getMovie(@Query("api_key") String apiKey,
+                         @Query("id") int id);
 }

@@ -5,6 +5,7 @@ package cz.muni.fi.pv256.movio2.uco_410034.Api.Model;
  */
 
 public class Movie {
+    public long id;
     public String title;
     public String poster_path;
     public String backdrop_path;
