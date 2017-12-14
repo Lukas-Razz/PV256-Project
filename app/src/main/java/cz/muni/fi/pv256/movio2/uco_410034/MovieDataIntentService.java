@@ -18,6 +18,7 @@ import java.util.concurrent.FutureTask;
 
 import cz.muni.fi.pv256.movio2.uco_410034.Api.*;
 import cz.muni.fi.pv256.movio2.uco_410034.Api.Model.DiscoverMovies;
+import cz.muni.fi.pv256.movio2.uco_410034.Mapper.MovieMapper;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieQuery;
 
@@ -65,13 +66,7 @@ public class MovieDataIntentService extends IntentService {
                         if (j == 6) {
                             break;
                         }
-                        cz.muni.fi.pv256.movio2.uco_410034.Model.Movie movie = new cz.muni.fi.pv256.movio2.uco_410034.Model.Movie();
-                        movie.setTitle(response.results[j].title);
-                        movie.setPopularity((float) ((response.results[j].vote_average) / 2));
-                        movie.setBackdrop(response.results[j].backdrop_path);
-                        movie.setCoverPath(response.results[j].poster_path);
-                        movie.setReleaseDate(new SimpleDateFormat("yyyy-mm-dd").parse(response.results[j].release_date).getTime());
-                        movie.setDescription(response.results[j].overview);
+                        cz.muni.fi.pv256.movio2.uco_410034.Model.Movie movie = MovieMapper.INSTANCE.apiMovieToMovie(response.results[j]);
                         movieList[j] = movie;
                     }
                     movieCategory.setMovieList(movieList);

@@ -77,7 +77,7 @@ public class MovieAPIClient {
         MovieAPI movieAPI = retrofit.create(MovieAPI.class);
 
 
-        Call<Movie> call = movieAPI.getMovie(apiKey, id);
+        Call<Movie> call = movieAPI.getMovie(id, apiKey);
         try {
             Log.i(TAG, call.request().toString());
             Response<Movie> response = call.execute();

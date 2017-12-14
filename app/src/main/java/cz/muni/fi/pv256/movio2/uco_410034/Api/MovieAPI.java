@@ -6,6 +6,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.Api.Model.DiscoverMovies;
 import cz.muni.fi.pv256.movio2.uco_410034.Api.Model.Movie;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -25,7 +26,7 @@ public interface MovieAPI {
                                         @Query("certification_country") String certificationCountry,
                                         @Query("certification") String certification);
 
-    @GET("movie")
-    Call<Movie> getMovie(@Query("api_key") String apiKey,
-                         @Query("id") int id);
+    @GET("movie/{id}")
+    Call<Movie> getMovie(@Path("id") int id,
+                         @Query("api_key") String apiKey);
 }

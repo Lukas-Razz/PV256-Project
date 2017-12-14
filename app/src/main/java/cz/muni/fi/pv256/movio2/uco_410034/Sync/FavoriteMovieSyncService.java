@@ -4,6 +4,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import cz.muni.fi.pv256.movio2.uco_410034.App;
+import cz.muni.fi.pv256.movio2.uco_410034.Db.MovieDatabase;
+
 /**
  * Created by lukas on 10.12.2017.
  */
@@ -16,7 +19,7 @@ public class FavoriteMovieSyncService extends Service {
     public void onCreate() {
         synchronized (LOCK) {
             if (sFavoriteMovieSyncAdapter == null) {
-                sFavoriteMovieSyncAdapter = new FavoriteMovieSyncAdapter(getApplicationContext(), true);
+                sFavoriteMovieSyncAdapter = new FavoriteMovieSyncAdapter(getApplicationContext(), true, MovieDatabase.getInstance(getApplicationContext()).movieDao(), ((App)getApplication()).getApiKey());
             }
         }
     }
