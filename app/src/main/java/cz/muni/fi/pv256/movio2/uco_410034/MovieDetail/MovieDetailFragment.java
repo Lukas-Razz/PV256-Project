@@ -68,7 +68,6 @@ public class MovieDetailFragment extends Fragment implements FavoriteDataUpdateL
 
             mMovieDetailCollapsingMovieTitleLabel.setText(mMovie.getTitle());
             mMovieDetailCollapsingMovieDateLabel.setText(new SimpleDateFormat("yyyy-mm-dd").format(new Date(mMovie.getReleaseDate())));
-            mMovieDetailCollapsingMovieDirectorLabel.setText("Director Name");
             mMovieDetailDescription.setText(mMovie.getDescription());
             Picasso.with(getContext())
                     .load(String.format("https://image.tmdb.org/t/p/w250_and_h141_bestv2/%s", mMovie.getBackdrop()))

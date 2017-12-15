@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="movie_height">150dp</dimen>
+    <dimen name="movie_panel_content_margin">5dp</dimen>
+    <dimen name="movie_category_vertical_margin">5dp</dimen>
+    <dimen name="floating_action_button_margin">10dp</dimen>
+    <dimen name="movie_detail_description_margin">5dp</dimen>
+    <dimen name="movie_detail_description_line_spacing_extra">8dp</dimen>
+    <dimen name="movie_detail_movie_image_horizontal_margin">10dp</dimen>
+    <dimen name="movie_detail_movie_image_vertical_margin">5dp</dimen>
+    <dimen name="movie_detail_appbar_layout_height">300dp</dimen>
+    <dimen name="movie_detail_date_label_horizontal_margin">5dp</dimen>
+</resources>
