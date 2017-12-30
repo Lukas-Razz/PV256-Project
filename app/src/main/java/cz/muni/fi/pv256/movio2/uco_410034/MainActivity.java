@@ -3,7 +3,10 @@ package cz.muni.fi.pv256.movio2.uco_410034;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +18,9 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -35,8 +40,10 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
 
     @BindView(R.id.rootLayout) DrawerLayout mDrawerLayout;
     @Nullable @BindView(R.id.contentLayout) FrameLayout mContentLayout;
+    @Nullable @BindView(R.id.tabletContentLayout) ConstraintLayout mTabletContentLayout;
     @Nullable @BindView(R.id.leftContentLayout) FrameLayout mLeftContentLayout;
     @Nullable @BindView(R.id.rightContentLayout) FrameLayout mRightContentLayout;
+    @BindView(R.id.emptyView) ViewStub mEmptyView;
 
     @BindString(R.string.fragment_movie_list_tag) String fragmentMovieListTag;
     @BindString(R.string.fragment_movie_detail_tag) String fragmentMovieDetailTag;
@@ -45,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @BindString(R.string.bundle_movie_categories_key) String mBundleMovieCategoriesKey;
     @BindString(R.string.bundle_movie_key) String mBundleMovieKey;
     @BindBool(R.bool.isTablet) boolean mIsTablet;
+    @BindString(R.string.empty_list_no_connection) String mEmptyListNoConnection;
+    @BindString(R.string.empty_list_no_data) String mEmptyListNoData;
 
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -61,11 +70,18 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         if (savedInstanceState != null) {
             mMovieCategories = savedInstanceState.getSparseParcelableArray(mBundleMovieCategoriesKey);
         }
+        else {
+            fillDummyData();
+        }
 
         setUpDrawer();
 
-        setUpFragments(savedInstanceState);
-
+        if(isDataEmpty()) {
+            setUpEmptyView();
+        }
+        else {
+            setUpFragments(savedInstanceState);
+        }
     }
 
     @Override
@@ -136,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     private void setUpFragments(Bundle savedInstanceState) {
         if(savedInstanceState == null) {
 
-            fillDummyData();
             Bundle bundle;
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -188,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     }
 
     private void fillDummyData() {
-
         Random random = new Random();
         for (int i = 0; i < 2; i++) {
             String name = "Dummy Category #" + i;
@@ -199,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
                 Movie movie = new Movie();
                 movie.setTitle("DummyMovie #" + i + "." + j);
                 movie.setReleaseDate(random.nextInt(2018-1950) + 1950);
+                movie.setPopularity(random.nextFloat() * 5);
                 movies[j] = movie;
             }
             category.setMovieList(movies);
@@ -220,5 +235,34 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
             getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieDetailFragment, fragmentMovieDetailTag).commit();
             mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
+    }
+
+    private boolean isDataEmpty() {
+        if(mMovieCategories == null)
+            return true;
+        for (int i = 0; i<mMovieCategories.size(); i++) {
+            if (mMovieCategories.get(i) != null)
+                return false;
+        }
+        return true;
+    }
+
+    private void setUpEmptyView() {
+        String emptyLabelText = mEmptyListNoData;
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null == activeNetwork) {
+            emptyLabelText = mEmptyListNoConnection;
+        }
+        if(mIsTablet) {
+            mLeftContentLayout.setVisibility(View.GONE);
+            mRightContentLayout.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mContentLayout.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+        ((TextView) findViewById(R.id.emptyListLabel)).setText(emptyLabelText);
     }
 }
