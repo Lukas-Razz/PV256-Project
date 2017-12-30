@@ -2,6 +2,7 @@ package cz.muni.fi.pv256.movio2.uco_410034;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -32,12 +33,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.Movie;
+import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieQuery;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieDetail.MovieDetailFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieSelectedListener;
 
-public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DataUpdateListener{
+public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DataUpdateListener {
 
     private static final String TAG = "MainActivity";
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @BindString(R.string.empty_list_no_data) String mEmptyListNoData;
 
     private ActionBarDrawerToggle mDrawerToggle;
+    private MovieDataBroadcastReceiver mMovieDataBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +75,17 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        DataHolder.INSTANCE.subscribeDataUpdateListener(this);
+        MovieDataHolder.INSTANCE.subscribeDataUpdateListener(this);
 
-        MovieAPIClient movieAPIClient = new MovieAPIClient(((App)getApplication()).getApiKey());
-        Calendar calendar = Calendar.getInstance();
-        Date now = calendar.getTime();
-        calendar.add(Calendar.MONTH, -1);
-        Date monthAgo = calendar.getTime();
-        movieAPIClient.getMostPopularMovies(new Locale("en-US"), monthAgo, now, "Popular in theatres");
-        movieAPIClient.getMostPopularMovies("R", "Most popular 'R' rated");
+        IntentFilter filter = new IntentFilter(MovieDataBroadcastReceiver.ACTION_RESPONSE_KEY);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        mMovieDataBroadcastReceiver = new MovieDataBroadcastReceiver();
+        registerReceiver(mMovieDataBroadcastReceiver, filter);
 
         setUpDrawer();
 
-        if(DataHolder.INSTANCE.isDataEmpty()) {
+        if(MovieDataHolder.INSTANCE.isDataEmpty()) {
+            requestData();
             setUpEmptyView();
         }
         else {
@@ -92,9 +93,33 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
     }
 
+    private void requestData() {
+        Log.i(TAG, "Requesting data...");
+        Intent movieDataIntent = new Intent(this, MovieDataIntentService.class);
+
+        MovieQuery mostPopularNowQuery = new MovieQuery();
+        mostPopularNowQuery.setLabel("Popular in theatres");
+        mostPopularNowQuery.setLanguage(new Locale("en-US"));
+        Calendar calendar = Calendar.getInstance();
+        Date now = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        Date monthAgo = calendar.getTime();
+        mostPopularNowQuery.setFrom(monthAgo);
+        mostPopularNowQuery.setTo(now);
+
+        MovieQuery mostPopularRRatedQuery = new MovieQuery();
+        mostPopularRRatedQuery.setLabel("Most popular 'R' rated");
+        mostPopularRRatedQuery.setRating("R");
+
+        MovieQuery[] queries = {mostPopularNowQuery, mostPopularRRatedQuery};
+        movieDataIntent.putExtra(MovieDataIntentService.PARAM_QUERY_KEY, queries);
+        startService(movieDataIntent);
+    }
+
     @Override
     protected void onDestroy() {
-        DataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
+        unregisterReceiver(mMovieDataBroadcastReceiver);
+        MovieDataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
         super.onDestroy();
     }
 
@@ -176,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
             fragmentTransaction.add(R.id.leftContentLayout, movieListFragment, fragmentMovieListTag);
             MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(mBundleMovieKey, DataHolder.INSTANCE.getMovieCategories().get(0).getMovieList()[0]);
+            bundle.putParcelable(mBundleMovieKey, MovieDataHolder.INSTANCE.getMovieCategories().get(0).getMovieList()[0]);
             movieDetailFragment.setArguments(bundle);
             fragmentTransaction.add(R.id.rightContentLayout, movieDetailFragment, fragmentMovieDetailTag);
         } else {
