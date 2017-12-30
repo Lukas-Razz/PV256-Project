@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Uco_410034.Alternative</string>
+    <string name="shared_pref_style_key">appAlternativeStyle</string>
+</resources>
