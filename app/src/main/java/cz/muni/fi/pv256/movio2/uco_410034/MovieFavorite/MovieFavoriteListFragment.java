@@ -1,4 +1,4 @@
-package cz.muni.fi.pv256.movio2.uco_410034.MovieList;
+package cz.muni.fi.pv256.movio2.uco_410034.MovieFavorite;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,31 +11,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.BindString;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cz.muni.fi.pv256.movio2.uco_410034.MovieDataHolder;
-import cz.muni.fi.pv256.movio2.uco_410034.DiscoverDataUpdateListener;
+import cz.muni.fi.pv256.movio2.uco_410034.FavoriteDataUpdateListener;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.Movie;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
+import cz.muni.fi.pv256.movio2.uco_410034.MovieDataHolder;
+import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieSelectedListener;
 import cz.muni.fi.pv256.movio2.uco_410034.R;
 
 /**
  * Created by lukas on 17.10.2017.
  */
 
-public class MovieListFragment extends Fragment implements MovieSelectedListener, DiscoverDataUpdateListener {
+public class MovieFavoriteListFragment extends Fragment implements MovieSelectedListener, FavoriteDataUpdateListener {
 
-    private static final String TAG = "MovieListFragment";
+    private static final String TAG = "MovieFavoriteListFragme";
 
     @BindView(R.id.movieListView) RecyclerView mMovieListView;
 
-    @BindString(R.string.bundle_movie_categories_key) String mBundleMovieCategoriesKey;
-
     private MovieSelectedListener mMovieSelectedListener;
-    private MovieListAdapter movieListAdapter;
+    private MovieFavoriteListAdapter mMovieFavoriteListAdapter;
 
-    private SparseArray<MovieCategory> mMovieCategories;
+    private List<Movie> mMovies;
 
     @Nullable
     @Override
@@ -43,14 +43,13 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
         View view = inflater.inflate(R.layout.fragment_movie_list , container, false);
         ButterKnife.bind(this, view);
 
-        mMovieCategories = MovieDataHolder.INSTANCE.getMovieCategories();
-        MovieDataHolder.INSTANCE.subscribeDiscoverDataUpdateListener(this);
+        mMovies = MovieDataHolder.INSTANCE.getFavoriteMovies();
 
-        movieListAdapter = new MovieListAdapter(mMovieCategories);
-        movieListAdapter.setMovieSelectedListener(this);
+        mMovieFavoriteListAdapter = new MovieFavoriteListAdapter(mMovies);
+        mMovieFavoriteListAdapter.setMovieSelectedListener(this);
         RecyclerView.LayoutManager movieListLayoutManager = new LinearLayoutManager(inflater.getContext());
         mMovieListView.setLayoutManager(movieListLayoutManager);
-        mMovieListView.setAdapter(movieListAdapter);
+        mMovieListView.setAdapter(mMovieFavoriteListAdapter);
 
         return view;
     }
@@ -58,8 +57,8 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     @Override
     public void onDestroy() {
         mMovieSelectedListener = null;
-        movieListAdapter.setMovieSelectedListener(null);
-        MovieDataHolder.INSTANCE.unsubscribeDiscoverDataUpdateListener(this);
+        mMovieFavoriteListAdapter.setMovieSelectedListener(null);
+        MovieDataHolder.INSTANCE.unsubscribeFavoriteDataUpdateListener(this);
         super.onDestroy();
     }
 
@@ -73,15 +72,15 @@ public class MovieListFragment extends Fragment implements MovieSelectedListener
     }
 
     @Override
-    public void onDataUpdate(final SparseArray<MovieCategory> movieCategories) {
+    public void onDataUpdate(final List<Movie> movies) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Log.i(TAG, "Updating Data...");
-                for(int i=0; i<movieCategories.size(); i++) {
-                    mMovieCategories.put(i, movieCategories.get(i));
+                for(int i=0; i<movies.size(); i++) {
+                    mMovies.add(i, movies.get(i));
                 }
-                movieListAdapter.notifyDataSetChanged();
+                mMovieFavoriteListAdapter.notifyDataSetChanged();
             }
         });
     }

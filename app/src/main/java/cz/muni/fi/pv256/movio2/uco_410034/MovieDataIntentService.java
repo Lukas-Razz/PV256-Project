@@ -15,6 +15,8 @@ import android.util.SparseArray;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -75,7 +77,7 @@ public class MovieDataIntentService extends IntentService {
                         movie.setPopularity((float) ((response.results[j].vote_average) / 2));
                         movie.setBackdrop(response.results[j].backdrop_path);
                         movie.setCoverPath(response.results[j].poster_path);
-                        movie.setReleaseDate(Long.valueOf(response.results[j].release_date.split("-")[0]));
+                        movie.setReleaseDate(new SimpleDateFormat("yyyy-mm-dd").parse(response.results[j].release_date).getTime());
                         movie.setDescription(response.results[j].overview);
                         movieList[j] = movie;
                     }

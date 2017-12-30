@@ -9,7 +9,10 @@
     <string name="bundle_movie_key">movie</string>
     <string name="fragment_movie_list_tag">fragmentMovieList</string>
     <string name="fragment_movie_detail_tag">fragmentMovieDetail</string>
+    <string name="fragment_movie_favorite_list_tag">fragmentMovieList</string>
     <string name="empty_list_no_connection">Device is not connected to the Internet!</string>
     <string name="empty_list_no_data">No data to show!</string>
     <string name="drawer_item_change_style">Change style</string>
+    <string name="actionbar_switch_label_discover">Discover</string>
+    <string name="actionbar_switch_label_favorites">Favorites</string>
 </resources>

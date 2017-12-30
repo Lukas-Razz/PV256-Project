@@ -1,5 +1,7 @@
 package cz.muni.fi.pv256.movio2.uco_410034;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,20 +13,26 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindBool;
@@ -32,14 +40,17 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cz.muni.fi.pv256.movio2.uco_410034.Db.MovieDatabase;
+import cz.muni.fi.pv256.movio2.uco_410034.Mapper.MovieMapper;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.Movie;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieQuery;
 import cz.muni.fi.pv256.movio2.uco_410034.Model.MovieCategory;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieDetail.MovieDetailFragment;
+import cz.muni.fi.pv256.movio2.uco_410034.MovieFavorite.MovieFavoriteListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieSelectedListener;
 
-public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DataUpdateListener {
+public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DiscoverDataUpdateListener {
 
     private static final String TAG = "MainActivity";
 
@@ -49,18 +60,24 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @Nullable @BindView(R.id.leftContentLayout) FrameLayout mLeftContentLayout;
     @Nullable @BindView(R.id.rightContentLayout) FrameLayout mRightContentLayout;
     @BindView(R.id.emptyViewStub) ViewStub mEmptyViewStub;
+    SwitchCompat mActionBarSwitch;
+    TextView mActionBarSwitchLabel;
 
     @BindString(R.string.fragment_movie_list_tag) String fragmentMovieListTag;
     @BindString(R.string.fragment_movie_detail_tag) String fragmentMovieDetailTag;
+    @BindString(R.string.fragment_movie_favorite_list_tag) String fragmentMovieFavoriteDetailTag;
     @BindString(R.string.shared_pref_name) String sharedPrefName;
     @BindString(R.string.shared_pref_style_key) String sharedPrefStyleKey;
     @BindString(R.string.bundle_movie_key) String mBundleMovieKey;
     @BindBool(R.bool.isTablet) boolean mIsTablet;
     @BindString(R.string.empty_list_no_connection) String mEmptyListNoConnection;
     @BindString(R.string.empty_list_no_data) String mEmptyListNoData;
+    @BindString(R.string.actionbar_switch_label_discover) String mActionBarSwitchLabelDiscover;
+    @BindString(R.string.actionbar_switch_label_favorites) String mActionBarSwitchLabelFavorites;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private MovieDataBroadcastReceiver mMovieDataBroadcastReceiver;
+    private MovieLoader mLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +92,20 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        MovieDataHolder.INSTANCE.subscribeDataUpdateListener(this);
+        MovieDataHolder.INSTANCE.subscribeDiscoverDataUpdateListener(this);
 
         IntentFilter filter = new IntentFilter(MovieDataBroadcastReceiver.ACTION_RESPONSE_KEY);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         mMovieDataBroadcastReceiver = new MovieDataBroadcastReceiver();
         registerReceiver(mMovieDataBroadcastReceiver, filter);
 
+        mLoader = new MovieLoader(getApplicationContext(), MovieDatabase.getInstance(getApplicationContext()).movieDao());
+        getSupportLoaderManager().initLoader(1, null, mLoaderCallbacks);
+        mLoader.startLoading();
+
         setUpDrawer();
 
-        if(MovieDataHolder.INSTANCE.isDataEmpty()) {
+        if(MovieDataHolder.INSTANCE.isDiscoverDataEmpty()) {
             requestData();
             setUpEmptyView();
         }
@@ -119,21 +140,72 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @Override
     protected void onDestroy() {
         unregisterReceiver(mMovieDataBroadcastReceiver);
-        MovieDataHolder.INSTANCE.unsubscribeDataUpdateListener(this);
+        MovieDataHolder.INSTANCE.unsubscribeDiscoverDataUpdateListener(this);
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
         if(!mIsTablet && getSupportFragmentManager().findFragmentByTag(fragmentMovieDetailTag) != null) {
-            MovieListFragment movieListFragment = new MovieListFragment();
-            movieListFragment.setMovieSelectedListener(this);
-            getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
-            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            if(mActionBarSwitch.isChecked()) {
+                MovieFavoriteListFragment movieFavoriteListFragment = new MovieFavoriteListFragment();
+                movieFavoriteListFragment.setMovieSelectedListener(this);
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieFavoriteListFragment, fragmentMovieFavoriteDetailTag).commit();
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
+            else {
+                MovieListFragment movieListFragment = new MovieListFragment();
+                movieListFragment.setMovieSelectedListener(this);
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
         }
         else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem item = menu.findItem(R.id.menuSwitch);
+        item.setActionView(R.layout.menu_switch);
+        mActionBarSwitch = item.getActionView().findViewById(R.id.actionBarSwitch);
+        mActionBarSwitchLabel = item.getActionView().findViewById(R.id.actionBarSwitchLabel);
+        mActionBarSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(mActionBarSwitch.isChecked()) {
+                    //Show favorites
+                    mActionBarSwitchLabel.setText(mActionBarSwitchLabelFavorites);
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    MovieFavoriteListFragment movieFavoriteListFragment = new MovieFavoriteListFragment();
+                    movieFavoriteListFragment.setMovieSelectedListener(MainActivity.this);
+                    if (mIsTablet) {
+                        fragmentTransaction.replace(R.id.leftContentLayout, movieFavoriteListFragment, fragmentMovieFavoriteDetailTag);
+                    } else {
+                        fragmentTransaction.replace(R.id.contentLayout, movieFavoriteListFragment, fragmentMovieFavoriteDetailTag);
+                    }
+                    fragmentTransaction.commit();
+                }
+                else {
+                    //Show discover
+                    mActionBarSwitchLabel.setText(mActionBarSwitchLabelDiscover);
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    MovieListFragment movieListFragment = new MovieListFragment();
+                    movieListFragment.setMovieSelectedListener(MainActivity.this);
+                    if (mIsTablet) {
+                        fragmentTransaction.replace(R.id.leftContentLayout, movieListFragment, fragmentMovieListTag);
+                    } else {
+                        fragmentTransaction.replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag);
+                    }
+                    fragmentTransaction.commit();
+                }
+            }
+        });
+        return true;
     }
 
     @Override
@@ -143,10 +215,18 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
         switch (item.getItemId()) {
             case android.R.id.home:
-                MovieListFragment movieListFragment = new MovieListFragment();
-                movieListFragment.setMovieSelectedListener(this);
-                getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
-                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                if(mActionBarSwitch.isChecked()) {
+                    MovieFavoriteListFragment movieFavoriteListFragment = new MovieFavoriteListFragment();
+                    movieFavoriteListFragment.setMovieSelectedListener(this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieFavoriteListFragment, fragmentMovieFavoriteDetailTag).commit();
+                    mDrawerToggle.setDrawerIndicatorEnabled(true);
+                }
+                else {
+                    MovieListFragment movieListFragment = new MovieListFragment();
+                    movieListFragment.setMovieSelectedListener(this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.contentLayout, movieListFragment, fragmentMovieListTag).commit();
+                    mDrawerToggle.setDrawerIndicatorEnabled(true);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -294,4 +374,27 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         }
         ((TextView) findViewById(R.id.emptyListLabel)).setText(emptyLabelText);
     }
+
+    private LoaderManager.LoaderCallbacks<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> mLoaderCallbacks =
+            new LoaderManager.LoaderCallbacks<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>>() {
+        @Override
+        public Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> onCreateLoader(int id, Bundle args) {
+            return mLoader;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> loader, LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>> data) {
+
+            data.observe(MainActivity.this, new Observer<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>() {
+                @Override
+                public void onChanged(@Nullable List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie> movies) {
+                    MovieDataHolder.INSTANCE.setFavoriteMovies(MovieMapper.INSTANCE.dbMovieToMovie(movies));
+                }
+            });
+        }
+
+        @Override
+        public void onLoaderReset(Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> loader) {
+        }
+    };
 }

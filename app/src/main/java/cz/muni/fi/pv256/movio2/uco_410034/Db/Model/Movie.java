@@ -1,19 +1,35 @@
-package cz.muni.fi.pv256.movio2.uco_410034.Model;
+package cz.muni.fi.pv256.movio2.uco_410034.Db.Model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
- * Created by lukas on 18.10.2017.
+ * Created by lukas on 06.12.2017.
  */
 
-public class Movie implements Parcelable {
+@Entity(tableName = "movie")
+public class Movie {
 
+    @ColumnInfo(name = "release_date")
     private long mReleaseDate;
+
+    @ColumnInfo(name = "cover_path")
     private String mCoverPath;
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "title")
     private String mTitle;
+
+    @ColumnInfo(name = "backdrop")
     private String mBackdrop;
+
+    @ColumnInfo(name = "popularity")
     private float mPopularity;
+
+    @ColumnInfo(name = "description")
     private String mDescription;
 
     public long getReleaseDate() {
@@ -21,7 +37,7 @@ public class Movie implements Parcelable {
     }
 
     public void setReleaseDate(long releaseDate) {
-        this.mReleaseDate = releaseDate;
+        mReleaseDate = releaseDate;
     }
 
     public String getCoverPath() {
@@ -29,19 +45,15 @@ public class Movie implements Parcelable {
     }
 
     public void setCoverPath(String coverPath) {
-        this.mCoverPath = coverPath;
+        mCoverPath = coverPath;
     }
 
     public String getTitle() {
         return mTitle;
     }
 
-    public String getDescription() {
-        return mDescription;
-    }
-
     public void setTitle(String title) {
-        this.mTitle = title;
+        mTitle = title;
     }
 
     public String getBackdrop() {
@@ -49,7 +61,7 @@ public class Movie implements Parcelable {
     }
 
     public void setBackdrop(String backdrop) {
-        this.mBackdrop = backdrop;
+        mBackdrop = backdrop;
     }
 
     public float getPopularity() {
@@ -57,51 +69,16 @@ public class Movie implements Parcelable {
     }
 
     public void setPopularity(float popularity) {
-        this.mPopularity = popularity;
+        mPopularity = popularity;
+    }
+
+    public String getDescription() {
+        return mDescription;
     }
 
     public void setDescription(String description) {
-        this.mDescription = description;
+        mDescription = description;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.mReleaseDate);
-        dest.writeString(this.mCoverPath);
-        dest.writeString(this.mTitle);
-        dest.writeString(this.mBackdrop);
-        dest.writeFloat(this.mPopularity);
-        dest.writeString(this.mDescription);
-    }
-
-    public Movie() {
-    }
-
-    protected Movie(Parcel in) {
-        this.mReleaseDate = in.readLong();
-        this.mCoverPath = in.readString();
-        this.mTitle = in.readString();
-        this.mBackdrop = in.readString();
-        this.mPopularity = in.readFloat();
-        this.mDescription = in.readString();
-    }
-
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel source) {
-            return new Movie(source);
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
 
     @Override
     public boolean equals(Object o) {
@@ -114,8 +91,7 @@ public class Movie implements Parcelable {
         if (Float.compare(movie.getPopularity(), getPopularity()) != 0) return false;
         if (getCoverPath() != null ? !getCoverPath().equals(movie.getCoverPath()) : movie.getCoverPath() != null)
             return false;
-        if (getTitle() != null ? !getTitle().equals(movie.getTitle()) : movie.getTitle() != null)
-            return false;
+        if (!getTitle().equals(movie.getTitle())) return false;
         if (getBackdrop() != null ? !getBackdrop().equals(movie.getBackdrop()) : movie.getBackdrop() != null)
             return false;
         return getDescription() != null ? getDescription().equals(movie.getDescription()) : movie.getDescription() == null;
@@ -125,7 +101,7 @@ public class Movie implements Parcelable {
     public int hashCode() {
         int result = (int) (getReleaseDate() ^ (getReleaseDate() >>> 32));
         result = 31 * result + (getCoverPath() != null ? getCoverPath().hashCode() : 0);
-        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
+        result = 31 * result + getTitle().hashCode();
         result = 31 * result + (getBackdrop() != null ? getBackdrop().hashCode() : 0);
         result = 31 * result + (getPopularity() != +0.0f ? Float.floatToIntBits(getPopularity()) : 0);
         result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
