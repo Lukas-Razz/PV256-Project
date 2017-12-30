@@ -10,7 +10,7 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/movieDetailAppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="@dimen/movie_detail_appbar_layout_height"
             >
 
             <android.support.design.widget.CollapsingToolbarLayout
@@ -54,13 +54,6 @@
                         android:orientation="vertical"
                         app:layout_constraintGuide_percent="0.33"/>
 
-                    <android.support.constraint.Guideline
-                        android:id="@+id/movieDetailCollapsingGuidelineMovieTextRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.66"/>
-
                     <ImageView
                         android:id="@+id/movieDetailCollapsingUpperImage"
                         android:layout_width="0dp"
@@ -78,10 +71,10 @@
                         android:id="@+id/movieDetailCollapsingMovieImage"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="@dimen/movie_detail_movie_image_vertical_margin"
+                        android:layout_marginLeft="@dimen/movie_detail_movie_image_horizontal_margin"
+                        android:layout_marginRight="@dimen/movie_detail_movie_image_horizontal_margin"
+                        android:layout_marginBottom="@dimen/movie_detail_movie_image_vertical_margin"
                         app:layout_constraintTop_toBottomOf="@+id/movieDetailCollapsingGuidelineMovieImageTop"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="@+id/movieDetailCollapsingGuidelineMovieImageRight"
@@ -93,15 +86,20 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toTopOf="@+id/movieDetailCollapsingGuidelineMovieTitleBottom"
                         app:layout_constraintLeft_toRightOf="@+id/movieDetailCollapsingGuidelineMovieImageRight"
-                        app:layout_constraintRight_toLeftOf="@+id/movieDetailCollapsingMovieDateLabel" />
+                        app:layout_constraintRight_toLeftOf="@+id/movieDetailCollapsingMovieDateLabel"
+                        app:layout_constraintHorizontal_chainStyle="spread"
+                        android:text="Label"/>
 
                     <TextView
                         android:id="@+id/movieDetailCollapsingMovieDateLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/movie_detail_date_label_horizontal_margin"
                         app:layout_constraintBottom_toTopOf="@+id/movieDetailCollapsingGuidelineMovieTitleBottom"
                         app:layout_constraintLeft_toRightOf="@+id/movieDetailCollapsingMovieTitleLabel"
-                        app:layout_constraintRight_toRightOf="@+id/movieDetailCollapsingGuidelineMovieTextRight" />
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintHorizontal_chainStyle="spread"
+                        android:text="Year"/>
 
                     <TextView
                         android:id="@+id/movieDetailCollapsingMovieDirectorLabel"
@@ -135,10 +133,11 @@
                 android:id="@+id/movieDetailDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/movie_detail_description_margin"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:lineSpacingExtra="8dp" />
+                android:lineSpacingExtra="@dimen/movie_detail_description_line_spacing_extra" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -148,7 +147,7 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/floating_action_button_margin"
         app:layout_anchor="@+id/movieDetailAppBarLayout"
         app:layout_anchorGravity="center_vertical|right"
         android:src="@drawable/ic_add_white_24px" />

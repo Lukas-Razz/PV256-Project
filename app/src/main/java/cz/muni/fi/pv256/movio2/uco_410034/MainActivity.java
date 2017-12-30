@@ -1,7 +1,10 @@
 package cz.muni.fi.pv256.movio2.uco_410034;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -49,6 +52,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.MovieDetail.MovieDetailFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieFavorite.MovieFavoriteListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieListFragment;
 import cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieSelectedListener;
+import cz.muni.fi.pv256.movio2.uco_410034.Sync.FavoriteMovieSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements MovieSelectedListener, DiscoverDataUpdateListener {
 
@@ -74,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
     @BindString(R.string.empty_list_no_data) String mEmptyListNoData;
     @BindString(R.string.actionbar_switch_label_discover) String mActionBarSwitchLabelDiscover;
     @BindString(R.string.actionbar_switch_label_favorites) String mActionBarSwitchLabelFavorites;
+    @BindString(R.string.sync_account_type) String mSyncAccountType;
+    @BindString(R.string.sync_content_authority) String mSyncContentAuthority;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private MovieDataBroadcastReceiver mMovieDataBroadcastReceiver;
@@ -112,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         else {
             setUpFragments(savedInstanceState);
         }
+
+        FavoriteMovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     private void requestData() {
@@ -316,6 +324,14 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         finish();
     }
 
+    @OnClick(R.id.drawerSyncFavoritesButton)
+    public void drawerSyncFavoritesButtonClick(View view) {
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(FavoriteMovieSyncAdapter.getSyncAccount(this), mSyncContentAuthority, settingsBundle);
+    }
+
     @Override
     public void onMovieSelected(Movie movie) {
 
@@ -397,4 +413,5 @@ public class MainActivity extends AppCompatActivity implements MovieSelectedList
         public void onLoaderReset(Loader<LiveData<List<cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie>>> loader) {
         }
     };
+
 }

@@ -13,6 +13,9 @@
     <string name="empty_list_no_connection">Device is not connected to the Internet!</string>
     <string name="empty_list_no_data">No data to show!</string>
     <string name="drawer_item_change_style">Change style</string>
+    <string name="drawer_item_sync_favorites">Sync favorites</string>
     <string name="actionbar_switch_label_discover">Discover</string>
     <string name="actionbar_switch_label_favorites">Favorites</string>
+    <string name="sync_content_authority">cz.muni.fi.pv256.movio2.uco_410034.provider</string>
+    <string name="sync_account_type">cz.muni.fi.pv256.movio2.uco_410034.sync</string>
 </resources>

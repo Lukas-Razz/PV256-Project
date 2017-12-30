@@ -12,7 +12,7 @@ import cz.muni.fi.pv256.movio2.uco_410034.Db.Model.Movie;
  * Created by lukas on 06.12.2017.
  */
 
-@Database(entities = {Movie.class}, version = 2)
+@Database(entities = {Movie.class}, version = 3)
 public abstract class MovieDatabase extends RoomDatabase{
 
     private static MovieDatabase INSTANCE;

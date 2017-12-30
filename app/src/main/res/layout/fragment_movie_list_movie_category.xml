@@ -3,105 +3,98 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
     <TextView
         android:id="@+id/movieCategoryLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
+        android:layout_marginTop="@dimen/movie_category_vertical_margin"
+        android:layout_marginBottom="@dimen/movie_category_vertical_margin"
         app:layout_constraintBottom_toTopOf="@+id/movieTilesLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintVertical_weight="1"
+        android:textAlignment="center"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/movieTilesLayout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/movieCategoryLabel"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
+        app:layout_constraintVertical_chainStyle="spread">
 
         <cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieView
             android:id="@+id/movie_0"
-            android:tag="0"
             android:layout_width="0dp"
             android:layout_height="@dimen/movie_height"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
+            android:tag="0"
             app:layout_constraintBottom_toTopOf="@+id/movie_1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieView
             android:id="@+id/movie_1"
             android:tag="1"
             android:layout_width="0dp"
             android:layout_height="@dimen/movie_height"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/movie_0"
             app:layout_constraintBottom_toTopOf="@+id/movie_2"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintRight_toRightOf="parent" />
 
         <cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieView
             android:id="@+id/movie_2"
             android:tag="2"
             android:layout_width="0dp"
             android:layout_height="@dimen/movie_height"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/movie_1"
             app:layout_constraintBottom_toTopOf="@+id/movie_3"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintRight_toRightOf="parent" />
 
         <cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieView
             android:id="@+id/movie_3"
             android:tag="3"
             android:layout_width="0dp"
             android:layout_height="@dimen/movie_height"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/movie_2"
             app:layout_constraintBottom_toTopOf="@+id/movie_4"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintRight_toRightOf="parent" />
 
         <cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieView
             android:id="@+id/movie_4"
             android:tag="4"
             android:layout_width="0dp"
             android:layout_height="@dimen/movie_height"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/movie_3"
             app:layout_constraintBottom_toTopOf="@+id/movie_5"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintRight_toRightOf="parent" />
 
         <cz.muni.fi.pv256.movio2.uco_410034.MovieList.MovieView
             android:id="@+id/movie_5"
-            android:tag="5"
             android:layout_width="0dp"
             android:layout_height="@dimen/movie_height"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/movie_4"
+            android:tag="5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintTop_toBottomOf="@+id/movie_4" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -5,6 +5,7 @@
     <string name="empty_list_no_connection">Zařízení není připojeno k internetu!</string>
     <string name="empty_list_no_data">Žádná data k zobrazení!</string>
     <string name="drawer_item_change_style">Změnit styl</string>
+    <string name="drawer_item_sync_favorites">Synchronizuj oblíbené</string>
     <string name="actionbar_switch_label_discover">Přehed</string>
     <string name="actionbar_switch_label_favorites">Oblíbené</string>
 </resources>

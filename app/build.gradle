@@ -78,8 +78,6 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.2.0.Final'
     compile "android.arch.lifecycle:runtime:1.0.3"
     compile "android.arch.lifecycle:extensions:1.0.0"
-    compile 'com.facebook.stetho:stetho:1.5.0'
-    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'

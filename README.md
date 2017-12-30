@@ -1,2 +1,2 @@
 # PV256 (410034) #
-Android project
+Project for school and for trying new stuff.

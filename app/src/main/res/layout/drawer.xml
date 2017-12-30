@@ -4,13 +4,21 @@
     android:id="@+id/drawerPane"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_gravity="start">
+    android:layout_gravity="start"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/drawerChangeStyleButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
         android:text="@string/drawer_item_change_style"/>
+
+    <Button
+        android:id="@+id/drawerSyncFavoritesButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:text="@string/drawer_item_sync_favorites"/>
 
 </LinearLayout>

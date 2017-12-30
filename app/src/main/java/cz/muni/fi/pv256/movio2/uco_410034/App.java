@@ -5,7 +5,6 @@ import android.arch.persistence.room.Room;
 import android.os.Build;
 import android.os.StrictMode;
 
-import com.facebook.stetho.Stetho;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
@@ -35,8 +34,6 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             initStrictMode();
         }
-
-        Stetho.initializeWithDefaults(this);
 
         OkHttpClient client = new OkHttpClient();
         Picasso picasso = new Picasso.Builder(getApplicationContext())

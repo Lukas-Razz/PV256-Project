@@ -34,6 +34,7 @@ public class MovieDaoTest {
     @Test
     public void getAll_MovieList_ThreeMovies() {
         Movie m1 = new Movie();
+        m1.setId(1);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
@@ -41,19 +42,21 @@ public class MovieDaoTest {
         m1.setReleaseDate(123456789);
         m1.setTitle("M1");
         Movie m2 = new Movie();
-        m1.setPopularity(1.5f);
-        m1.setBackdrop("backdrop");
-        m1.setCoverPath("coverPath");
-        m1.setDescription("blabla");
-        m1.setReleaseDate(123456789);
-        m1.setTitle("M2");
+        m2.setId(1);
+        m2.setPopularity(1.5f);
+        m2.setBackdrop("backdrop");
+        m2.setCoverPath("coverPath");
+        m2.setDescription("blabla");
+        m2.setReleaseDate(123456789);
+        m2.setTitle("M2");
         Movie m3 = new Movie();
-        m1.setPopularity(1.5f);
-        m1.setBackdrop("backdrop");
-        m1.setCoverPath("coverPath");
-        m1.setDescription("blabla");
-        m1.setReleaseDate(123456789);
-        m1.setTitle("M3");
+        m3.setId(1);
+        m3.setPopularity(1.5f);
+        m3.setBackdrop("backdrop");
+        m3.setCoverPath("coverPath");
+        m3.setDescription("blabla");
+        m3.setReleaseDate(123456789);
+        m3.setTitle("M3");
         mDatabase.movieDao().insert(m1);
         mDatabase.movieDao().insert(m2);
         mDatabase.movieDao().insert(m3);
@@ -66,6 +69,7 @@ public class MovieDaoTest {
     @Test
     public void insert_MovieInserted_ValidMovie() {
         Movie m1 = new Movie();
+        m1.setId(1);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
@@ -83,6 +87,7 @@ public class MovieDaoTest {
     @Test
     public void delete_MovieDeleted_ValidMovie() {
         Movie m1 = new Movie();
+        m1.setId(1);
         m1.setPopularity(1.5f);
         m1.setBackdrop("backdrop");
         m1.setCoverPath("coverPath");
