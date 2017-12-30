@@ -4,7 +4,11 @@ import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
+import com.squareup.picasso.Picasso;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Created by lukas on 01.10.2017.
@@ -28,6 +32,14 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             initStrictMode();
         }
+
+        OkHttpClient client = new OkHttpClient();
+        Picasso picasso = new Picasso.Builder(getApplicationContext())
+                .indicatorsEnabled(false)
+                .loggingEnabled(false)
+                .downloader(new OkHttp3Downloader(client))
+                .build();
+        Picasso.setSingletonInstance(picasso);
     }
 
     public native String getApiKey();

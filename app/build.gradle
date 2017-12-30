@@ -14,11 +14,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            ndkBuild {
-                arguments "V=1"
-            }
-        }
+
         versionCode versionCodeValue
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         resConfigs "en", "cs"
@@ -33,8 +29,8 @@ android {
         }
     }
     externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
+        cmake {
+            path 'CMakeLists.txt'
         }
     }
     productFlavors {
@@ -58,6 +54,10 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:palette-v7:26.1.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     compile 'de.psdev.licensesdialog:licensesdialog:1.8.3'
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
